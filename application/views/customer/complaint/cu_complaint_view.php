@@ -181,12 +181,12 @@ if($complaint['status'] == 4){
 <div class="row">
   <div class="col-md-12">
 
-  <?php if($adminConvoId && $complaint['status'] != 2){ 
+  <!-- <?php if($adminConvoId && $complaint['status'] != 2){ 
     $chat_text =($complaint['status'] == 4 || $complaint['status'] == 0) ? 'VIEW CHAT' : 'Helpdesk';
     ?>
       <a class="btn btn-primary float-right" type="button"  href="<?php echo site_url('chat/'.$adminConvoId); ?>"> <?php  echo $chat_text; ?></a> 
       
-  <?php  }  ?>
+  <?php  }  ?> -->
 
   <?php 
       if($complaint['status'] != 0 && $complaint['status'] != 4 && $diff_date > 1){ 

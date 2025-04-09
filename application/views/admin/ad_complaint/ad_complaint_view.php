@@ -200,13 +200,13 @@ if(isset($project['warranty_till']) && $project['warranty_till'] != '' ){
 </div><!--  end row -->
 
 
-<?php if($custConvoId){ 
+<!-- <?php if($custConvoId){ 
   $chat_text =($complaint['status'] == 4 || $complaint['status'] == 0) ? 'VIEW CHAT' : 'CHAT WITH CUSTOMER';
   ?>
     <div class="row">
       <div class="col-md-12"><p><a class="btn btn-primary float-right" type="button"  href="<?php echo site_url('chat/'.$custConvoId); ?>"> <?php  echo $chat_text; ?></a> </p></div>
     </div>
-<?php  }  ?>
+<?php  }  ?> -->
 
 <!-- start complaint history -->
 <?php $this->load->view('admin/ad_complaint/ad_complaint_view_history');  ?>
