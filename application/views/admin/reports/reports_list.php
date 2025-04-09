@@ -125,7 +125,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <!-- <th scope="col">Created By</th> -->
                                 <th scope="col">Created Date</th>
                                 <th scope="col">Update on Ticket</th>
-                                <th scope="col">Completed Date</th>
+                                <th scope="col">Closed Date</th>
                                 <th scope="col">Days</th>
                             </tr>
                         </thead>

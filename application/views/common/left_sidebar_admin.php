@@ -48,9 +48,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <?php } ?> -->
 
 <?php if($this->role != 'sales') { ?>
-<li class="nav-item"><a class="nav-item-hold" href="<?php echo site_url('chat'); ?>"><i class="nav-icon i-Speach-Bubble-3"></i><span class="nav-text">Message</span></a>
+<!-- <li class="nav-item"><a class="nav-item-hold" href="<?php echo site_url('chat'); ?>"><i class="nav-icon i-Speach-Bubble-3"></i><span class="nav-text">Message</span></a>
 <div class="triangle"></div>
-</li>
+</li> -->
 <?php } ?>
 
 <?php if($this->role == 'super_admin' || $this->role == 'admin') { ?>

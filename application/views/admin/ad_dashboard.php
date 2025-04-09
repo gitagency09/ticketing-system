@@ -64,7 +64,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <div class="card-body text-center">
 	<a href="<?php echo site_url('complaint');?>?status=1">
 	<div class="content">
-	<p class="text-muted mt-2 mb-0">Pending For Closure Tickets</p>
+	<p class="text-muted mt-2 mb-0">Completed Tickets</p>
 	<p class="text-primary text-24 line-height-1 mb-2"><?php echo $data['completed_ticket'] ?></p>
 	</div>
 	</a>
@@ -111,7 +111,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </div>
 </div> -->
 
-<div class="col-lg-3 col-md-6 col-sm-6">
+<!-- <div class="col-lg-3 col-md-6 col-sm-6">
 <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
 <div class="card-body text-center">
 	<a href="<?php echo site_url('complaint');?>?feedback=0&status=4">
@@ -122,7 +122,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </a>
 </div>
 </div>
-</div>
+</div> -->
 
 
 </div>

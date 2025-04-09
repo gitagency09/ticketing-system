@@ -304,6 +304,8 @@ class Reports extends My_Controller
     	$this->load->model('Equipment_model');
         $year = $this->input->get('year'); 
         $month = $this->input->get('month'); 
+        $from_date = $this->input->get('from_date');
+		$to_date   = $this->input->get('to_date');
 		if($this->role == 'admin' || $this->role == 'super_admin'){
 			$params = $this->searchParam(['status','ticket_no','company_id','complaint_type','classification']);
 
@@ -318,11 +320,20 @@ class Reports extends My_Controller
             $whereArr['YEAR(created_at)'] = $year;  // Filter by year
             $whereArr['MONTH(created_at)'] = $month; // Filter by month
         }
+        // Apply from_date and to_date filter directly in controller (using WHERE with raw condition)
+		if (!empty($from_date) && !empty($to_date)) {
+		    $whereArr['DATE(created_at) >='] = $from_date;
+		    $whereArr['DATE(created_at) <='] = $to_date;
+		} elseif (!empty($from_date)) {
+		    $whereArr['DATE(created_at) >='] = $from_date;
+		} elseif (!empty($to_date)) {
+		    $whereArr['DATE(created_at) <='] = $to_date;
+		}
 		if($this->role == 'admin' || $this->role == 'super_admin'){
 			$columns = 'id,ticket_no,company_id,complaint_type,description,customer_id,status,created_by,created_at,updated_at,classification';
 			$list = $this->Complaint_model->get_complaints($whereArr,$columns,FALSE,FALSE, $likeArr);
 			/*set column names*/
-        	$table_columns = array('Sr No', 'Ticket ID','Company','Complaint Type','Description','Status','Complaint Date','Update on Ticket','Completion date','days');
+        	$table_columns = array('Sr No', 'Ticket ID','Company','Complaint Type','Description','Status','Created Date','Closed date','days');
 		}else{
 			$whereArr['h.emp_id'] = $this->userid;
 			$whereArr['h.type'] = 'assign';
@@ -330,7 +341,7 @@ class Reports extends My_Controller
 			$list = $this->Complaint_model->get_complaints_for_emp_new($whereArr,$columns,FALSE,FALSE, $likeArr);
 
 			/*set column names*/
-        	$table_columns = array('Sr No', 'Ticket ID','Company','Complaint Type','Description','Status','Complaint Date','Update on Ticket','Completion date','days');
+        	$table_columns = array('Sr No', 'Ticket ID','Company','Complaint Type','Description','Status','Created Date','Closed date','days');
 		}
 
 		// dd($this->pq());
@@ -428,7 +439,7 @@ class Reports extends My_Controller
             $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['description']));
             $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['status']);
             $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['created_at']);
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['updated_at']);
+            //$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['updated_at']);
             $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['completed_at']);
             $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['days']);
             $excel_row++;
