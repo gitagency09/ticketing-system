@@ -127,6 +127,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <th scope="col">Update on Ticket</th>
                                 <th scope="col">Closed Date</th>
                                 <th scope="col">Days</th>
+                                <th scope="col">Time</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -313,6 +314,9 @@ $(document).ready(function() {
                         let colorClass = full.completed_at ? '' : 'text-danger'; // Apply red color if completed_at is empty
                         return '<span class="' + colorClass + '">' + data + '</span>';
                 }
+            },
+            {
+                data: 'time'
             },
         ],
         "drawCallback": function(settings) {

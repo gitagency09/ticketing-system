@@ -69,6 +69,15 @@ if($history){
             </div>
             </div>
 
+            <?php if($value['new_time']){ ?>
+	            <div class="col-md-12">   
+	            <div class="row">
+	            <div class="col-md-4"><p><b>Time: </b></p> </div>  
+	            <div class="col-md-8"><p><?php  echo htmlentities($value['new_time']);  ?></p></div>
+	            </div>
+	            </div>
+	        <?php } ?>
+
             <?php if($value['mom_doc']){ ?>
 					<div class="col-md-12">   
 						<div class="row">

@@ -55,6 +55,17 @@ $(document).ready(function(){
         }
   });
 
+  const statusSelect = document.getElementById('statusSelect');
+  const timeSelects = document.getElementById('timeSelects');
+
+  statusSelect.addEventListener('change', function () {
+    if (this.value === "1") {
+      timeSelects.style.display = 'block';
+    } else {
+      timeSelects.style.display = 'none';
+    }
+  });
+
 
 	$(document).on('change','.assign_wrapper .department', function(e) {
 		var val = $.trim(this.value);
@@ -186,7 +197,7 @@ $(document).ready(function(){
             complaint_id: {required: true},
             remark: {
                 required: function() {
-                    return $("#status").val() != "4"; // remark is required unless status is 4
+                    return $("#statusSelect").val() != "4"; // remark is required unless status is 4
                 }
             },
             status: {required: true},
@@ -196,6 +207,16 @@ $(document).ready(function(){
                 extension: "jpg,jpeg,png,pdf,xlsx,doc,docx",
                 filesize: 1, //1MB
             },
+            hours: {
+                required: function() {
+                    return $("#statusSelect").val() == "1"; // required if status is Completed
+                }
+            },
+            minutes: {
+                required: function() {
+                    return $("#statusSelect").val() == "1"; // required if status is Completed
+                }
+            }
         },
         messages: {
 

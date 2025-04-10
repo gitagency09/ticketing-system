@@ -108,7 +108,7 @@ class Reports extends My_Controller
 			$allres  = $this->Complaint_model->count($whereArr,$likeArr);
 			$totalRecordwithFilter = $allres;
 
-			$columns = 'id,ticket_no,company_id,complaint_type,description,customer_id,status,created_by,created_at,updated_at,classification';
+			$columns = 'id,ticket_no,company_id,complaint_type,description,customer_id,status,created_by,created_at,updated_at,classification,time';
 			$list = $this->Complaint_model->get_complaints($whereArr,$columns,$startrow,$rowperpage , $likeArr);
 			//dd($list);
 		}else{

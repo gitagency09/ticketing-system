@@ -1067,11 +1067,40 @@ class AdComplaint extends My_Controller
 		$complaint_id 	= trim($this->input->post('complaint_id',TRUE));
 		$new_status 	= trim($this->input->post('status',TRUE));
 		$action_type 	= trim($this->input->post('action_type',TRUE));
-		
-		//$visit_date 	= trim($this->input->post('visit_date',TRUE));
+		$new_hours = 0;
+		$new_minutes = 0;
 
+		if ($new_status == 1) {
+		    $new_hours   = (int) trim($this->input->post('hours', TRUE));
+		    $new_minutes = (int) trim($this->input->post('minutes', TRUE));
+		}
+
+		$new_time = str_pad($new_hours, 2, '0', STR_PAD_LEFT) . ':' . str_pad($new_minutes, 2, '0', STR_PAD_LEFT);
+		if ($new_time === '00:00') {
+		    $new_time = NULL;
+		}
+		//$visit_date 	= trim($this->input->post('visit_date',TRUE));
 		$complaint = $this->Complaint_model->get_complaint(['id' => $complaint_id]);
 		$prev_status 	= $complaint['status'];
+
+		$time = $complaint['time'];
+		$existing_hours = 0;
+		$existing_minutes = 0;
+		if (!empty($time)) {
+		    $time_parts = explode(':', $time);
+		    $existing_hours = isset($time_parts[0]) ? (int) $time_parts[0] : 0;
+		    $existing_minutes = isset($time_parts[1]) ? (int) $time_parts[1] : 0;
+		}
+
+		// Total time in minutes
+		$total_minutes = ($existing_hours * 60 + $existing_minutes) + ($new_hours * 60 + $new_minutes);
+
+		// Convert back to hours and minutes
+		$final_hours = floor($total_minutes / 60);
+		$final_minutes = $total_minutes % 60;
+
+		// Format with leading zeros (optional)
+		$f_time = str_pad($final_hours, 2, '0', STR_PAD_LEFT) . ':' . str_pad($final_minutes, 2, '0', STR_PAD_LEFT);
 
 		$complaint_type =$complaint['complaint_type'];
 		// $complaint_type = strtolower($complaint['complaint_type']);
@@ -1156,13 +1185,15 @@ class AdComplaint extends My_Controller
 		$data['top_dept'] 			= 1;
 		$data['prev_status'] 		= $prev_status;
 		$data['new_status'] 		= $new_status;
+		$data['new_status'] 		= $new_status;
+		$data['new_time'] 			= $new_time;
 		//$data['visit_date'] 		= $visit_date;
 		$data['created_by'] 		= $this->userid;
 		$data['created_at'] 		= getDt();
 		
 		$insert = $this->ComplaintHistory_model->add_complaint_history($data);
 		if($insert){
-			$updateData = array('status' => $new_status, 'updated_by' => $this->userid);
+			$updateData = array('status' => $new_status, 'updated_by' => $this->userid, 'time' => $f_time);
 			$this->Complaint_model->update_complaint($complaint_id,$updateData);
 
 

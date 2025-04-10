@@ -172,7 +172,7 @@ if($topLevel == 1){ ?>
 
       <div class="col-md-4 form-group mb-3">
           <label for=" ">Status</label>
-            <select class="form-control"  name="status">
+            <select class="form-control"  name="status" id="statusSelect">
             <option value="">Select Status</option>
             <?php
                 $status_list = complaint_status_list();
@@ -186,7 +186,30 @@ if($topLevel == 1){ ?>
                 ?>
           </select>
       </div>
+      <div id="timeSelects" style="display: none;" class="col-md-4 form-group mb-3">
+        <label>Time Taken:</label>
+        <div style="display: flex; gap: 10px;">
+          <select class="form-control" name="hours">
+            <option value="">Hr</option>
+            <!-- Hours from 0 to 23 -->
+            <script>
+              for (let i = 0; i < 24; i++) {
+                document.write(`<option value="${i}">${i} Hr</option>`);
+              }
+            </script>
+          </select>
 
+          <select class="form-control" name="minutes">
+            <option value="">Min</option>
+            <!-- Minutes from 0 to 59 -->
+            <script>
+              for (let i = 0; i < 60; i++) {
+                document.write(`<option value="${i}">${i} Min</option>`);
+              }
+            </script>
+          </select>
+        </div>
+      </div>
   </div>
 
 
