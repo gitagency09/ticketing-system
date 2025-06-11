@@ -313,6 +313,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     			ticket_no : $("#ticket_no").val().toLowerCase(),
     			complaint_type : $('#complaint_type').val(),
     			status : $("#status").val(),
+				company_id: $("#company").val(),
     			//classification : $("#classification").val(),
     			feedback : $("#feedback").val(),
     			action : $("#action").val(),

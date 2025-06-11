@@ -691,10 +691,10 @@ class AdComplaint extends My_Controller
 		// if($this->is_employee()){
 		// 	$canView = $this->ComplaintHistory_model->get_complaint_history(['complaint_id' =>$complaintId, 'emp_id' => $this->userid, 'type'=>'assign']);
 
-  //       	if(!$canView ){
-  //       		$this->sendFlashMsg(0,'Complaint details not found', 'complaint');
-  //       	}
-		// }
+		//       	if(!$canView ){
+		//       		$this->sendFlashMsg(0,'Complaint details not found', 'complaint');
+		//       	}
+				// }
 
 		$this->load->model('Files_model');
 
@@ -1867,10 +1867,10 @@ class AdComplaint extends My_Controller
     	$this->load->model('Equipment_model');
 
 		if($this->role == 'admin' || $this->role == 'super_admin'){
-			$params = $this->searchParam(['status','ticket_no','ga_no','complaint_type','classification','feedback']);
+			$params = $this->searchParam(['status','ticket_no','ga_no','complaint_type','classification','feedback','company_id']);
 
 		} else{
-			$params = $this->searchParam(['status','ticket_no','ga_no','complaint_type','classification','action']);
+			$params = $this->searchParam(['status','ticket_no','ga_no','complaint_type','classification','action','company_id']);
 		}
 
 		$whereArr 	= $params['where'];
@@ -1893,6 +1893,7 @@ class AdComplaint extends My_Controller
 
 		// dd($this->pq());
 		$status_list = complaint_status_list();
+		
 		foreach ($list as $key => $value) {
 			//customer data
 			$customer = $this->Customer_model->get_customer_details(['c.id' => $value['customer_id']]);
@@ -1930,7 +1931,7 @@ class AdComplaint extends My_Controller
 			}
 		}
 		// dd($list);
-// die;
+		// die;
 		// dd($list);
 
         $spreadsheet = new Spreadsheet();
@@ -1948,7 +1949,7 @@ class AdComplaint extends My_Controller
 
         $complaint_types = complaint_types();
         $classifications = classifications();
-
+		
         foreach ($list as $key=>$row) {
 
         	$class_e = isset($classifications[$row['classification']]) ? $classifications[$row['classification']] : '';
@@ -1987,7 +1988,6 @@ class AdComplaint extends My_Controller
         header('Content-Disposition: attachment;filename="ticket_list.xlsx"');
         $writer->save('php://output');
     }//end export
-
 }
 
 ?>
