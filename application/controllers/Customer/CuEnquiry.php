@@ -344,12 +344,12 @@ class CuEnquiry extends My_Controller
 		$ga_prefix =  strtolower(substr($data['ga_no'], 0, 2));
 		
 		if($ga_prefix == 's-'){
-			$to = ['gurule.arun@tsubaki-conveyor.in'];
-			$cc = ['rasika@agency09.in'];
+			$to = ['gaurav.agency09@gmail.com'];
+			$cc = ['gaurav.agency09@gmail.com'];
 		}
 		else if($ga_prefix == 'uh'){
-			$to = ['kadam.sambhaji@tsubaki-conveyor.in'];
-			$cc = ['pawar.ajay@tsubaki-conveyor.in','rasika@agency09.in'];
+			$to = ['gaurav.agency09@gmail.com'];
+			$cc = ['gaurav.agency09@gmail.com','gaurav.agency09@gmail.com'];
 		}else{
 			$to = $bcc;
 			$bcc = [];

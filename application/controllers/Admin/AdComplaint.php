@@ -1513,17 +1513,17 @@ class AdComplaint extends My_Controller
 
 		$bcc = [];
 		$admin = $this->User_model->get_user(['role' => 'admin']);
-		if($admin){
-			$bcc[] = $admin['email'];
-		}
+		// if($admin){
+		// 	$bcc[] = $admin['email'];
+		// }
 
 		//customer mail
 		if($customer){
 
 			$email_arr = [];
-			if($complaint['email_cc']){
-				$email_arr = explode(",", $complaint['email_cc']);
-			}
+			// if($complaint['email_cc']){
+			// 	$email_arr = explode(",", $complaint['email_cc']);
+			// }
 
 			$custSubject = 'Ticket updates : Ticket No. '.$complaint['ticket_no'];
 			$custMsg 	= 'Hello '.ucfirst($customer['first_name']).', <br><br>
@@ -1555,17 +1555,17 @@ class AdComplaint extends My_Controller
 
 		$bcc = [];
 		$admin = $this->User_model->get_user(['role' => 'admin']);
-		if($admin){
-			$bcc[] = $admin['email'];
-		}
+		// if($admin){
+		// 	$bcc[] = $admin['email'];
+		// }
 
 		//employee mail
 		if($employee){
 
 			$email_arr = [];
-			if($complaint['email_cc']){
-				$email_arr = explode(",", $complaint['email_cc']);
-			}
+			// if($complaint['email_cc']){
+			// 	$email_arr = explode(",", $complaint['email_cc']);
+			// }
 
 			$custSubject = 'Ticket updates : Ticket No. '.$complaint['ticket_no'];
 			$custMsg 	= 'Hello '.ucfirst($employee['first_name']).', <br><br>
@@ -1597,17 +1597,17 @@ class AdComplaint extends My_Controller
 
 		$bcc = [];
 		$admin = $this->User_model->get_user(['role' => 'admin']);
-		if($admin){
-			$bcc[] = $admin['email'];
-		}
+		// if($admin){
+		// 	$bcc[] = $admin['email'];
+		// }
 
 		//employee mail
 		if($employee){
 
 			$email_arr = [];
-			if($complaint['email_cc']){
-				$email_arr = explode(",", $complaint['email_cc']);
-			}
+			// if($complaint['email_cc']){
+			// 	$email_arr = explode(",", $complaint['email_cc']);
+			// }
 
 			$custSubject = 'Ticket updates : Ticket No. '.$complaint['ticket_no'];
 			$custMsg 	= 'Hello '.ucfirst($employee['first_name']).', <br><br>
