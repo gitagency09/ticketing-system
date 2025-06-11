@@ -72,7 +72,7 @@
 
 
 <div class="text-center reg_company_name">
-<p><strong>Agency09 Private Limited</p>
+<p><strong>AGENCY09 Private Limited</p>
 </div>
 
 <div class="text-center">
