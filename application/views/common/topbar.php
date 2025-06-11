@@ -10,7 +10,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <!--========================= HEADER =========================-->
 <div class="main-header">
 <div class="logo2">
-<img style="width: 170px;" src="<?php echo base_url('assets/images/logo.png'); ?>" alt="">
+<img style="width: 170px;" src="<?php echo base_url('assets/images/black-logo.png'); ?>" alt="">
 </div>
 <div class="menu-toggle">
 <div></div>

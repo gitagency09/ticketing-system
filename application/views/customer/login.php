@@ -70,7 +70,7 @@
 <div class="p-4">
 <div class="text-center mt-4 mb-4">
     <a href="<?php echo site_url('customer/login'); ?>">
-    <img style="width: 170px;" src="<?php echo base_url('assets/images/logo.png'); ?>" alt=""></a>
+    <img style="width: 170px;" src="<?php echo base_url('assets/images/black-logo.png'); ?>" alt=""></a>
 </div>
 
 
