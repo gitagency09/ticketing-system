@@ -359,6 +359,36 @@ class Company extends My_Controller
         return $error;
     }*/
 
+    
+    public function migrate_company_employees_to_mapping() {
+    // Fetch all companies
+        $companies = $this->db->get('company')->result_array();
+
+        foreach ($companies as $company) {
+            $companyId = $company['id'];
+            $employeeIds = explode(',', $company['employees']);
+
+            foreach ($employeeIds as $userId) {
+                $userId = trim($userId);
+                if (!empty($userId)) {
+                    // Check if mapping already exists to prevent duplicates
+                    $exists = $this->db->get_where('company_manager_mapping', [
+                        'company_id' => $companyId,
+                        'user_id' => $userId
+                    ])->row();
+
+                    if (!$exists) {
+                        $this->db->insert('company_manager_mapping', [
+                            'company_id' => $companyId,
+                            'user_id' => $userId
+                        ]);
+                    }
+                }
+            }
+        }
+
+        echo "Migration completed.";
+    }
 
 }
 

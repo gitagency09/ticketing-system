@@ -68,6 +68,7 @@ $route['change-password']['post'] 			= 'Admin/AdAccount/changePasswordDb';
 
 
 // ```````````Company``````````````
+$route['test_migrate'] 						= 'Admin/Company/migrate_company_employees_to_mapping';
 $route['company'] 						= 'Admin/Company/index';
 $route['company/list'] 					= 'Admin/Company/list';
 $route['company/create']['get'] 		= 'Admin/Company/create';
