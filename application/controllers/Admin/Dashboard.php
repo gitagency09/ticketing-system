@@ -10,7 +10,7 @@ class Dashboard extends My_Controller
 		parent::__construct();
 
 		if(!$this->is_logged_in()){
-			redirect($this->CUST_LOGIN);
+			redirect($this->ADMIN_LOGIN);
 		}
 
 		if($this->is_customer()){

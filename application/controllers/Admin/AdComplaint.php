@@ -67,8 +67,10 @@ class AdComplaint extends My_Controller
 		$whereArr 	= $params['where'];
 		$likeArr 	= $params['like'];
 
+
+		// dd($params);
 		$action_taken = '';
-		if($this->role == 'admin' || $this->role == 'super_admin'){
+		if($this->role == 'super_admin'){
 			$this->load->model('Feedback_model');
 
 			## Total number of records without filtering
@@ -79,16 +81,73 @@ class AdComplaint extends My_Controller
 			$allres  = $this->Complaint_model->count($whereArr,$likeArr);
 			$totalRecordwithFilter = $allres;
 
-			$columns = 'id,ticket_no,ga_no,complaint_type,customer_id,status,created_by,created_at,classification,feedback';
+			$columns = 'id,ticket_no,company_id,ga_no,complaint_type,customer_id,status,created_by,created_at,classification,feedback';
 			$list = $this->Complaint_model->get_complaints($whereArr,$columns,$startrow,$rowperpage , $likeArr);
-		}else{
+			// dd($list);
+		}
+		
+		else if($this->role == 'admin'){
+			$this->load->model('Feedback_model');
+
+			$conditions = [];
+
+			$this->load->model('Company_manager_mapping_model');
+			$company_ids = $this->Company_manager_mapping_model->get_company_ids_by_user($this->userid);
+
+			
+			if (!empty($company_ids)) {
+				$conditions['company_id'] = $company_ids;  // This will trigger where_in
+			}
+			
+
+			## Total number of records without filtering
+			$allres  = $this->Complaint_model->get_complaints('','id','','' ,'', $conditions);
+			$totalRecords = count($allres);
+
+			## Total number of records with filtering
+			$allres  = $this->Complaint_model->get_complaints($whereArr,'id','','' ,$likeArr, $conditions);
+			$totalRecordwithFilter = count($allres);
+
+			$columns = 'id,ticket_no,company_id,ga_no,complaint_type,customer_id,status,created_by,created_at,classification,feedback';
+			$list = $this->Complaint_model->get_complaints($whereArr,$columns,$startrow,$rowperpage , $likeArr, $conditions);
+			// dd($list);
+		}
+		
+		else{
 			$whereArr_a['h.emp_id'] = $this->userid;
             $whereArr_a['h.type'] = 'assign';
             $assignWhere = ['h.emp_id' => $this->userid,'h.type' => 'assign'];
 
-            $columns1 = 'c.id,c.ticket_no,c.ga_no,c.complaint_type,c.customer_id,c.status,c.created_by,c.created_at,classification,feedback';
+			## here we get list of assigned ticket to a particular employee
+			# if filter is applied, we merge assign and where clause ($new_where is the result)
+
+			## Total number of records without filtering
+            $totalRecords = $this->Complaint_model->get_complaints_for_emp_new($assignWhere,'c.id','','', $likeArr);
+            $totalRecords = count($totalRecords);
+			// dd($totalRecords);
+
+			## Total number of records with filtering
+            // dd( $whereArr );
+			$new_where = array_merge($assignWhere, $whereArr);
+			// $new_where = $assignWhere;
+			// dd($new_where);
+
+            $allres = $this->Complaint_model->get_complaints_for_emp_new($new_where,'c.id',FALSE,FALSE, $likeArr);
+            $totalRecordwithFilter = count($allres);
+			// dd($totalRecordwithFilter);
+
+			//get filtered result
+			$columns1 = 'c.id,c.company_id,c.ticket_no,c.ga_no,c.complaint_type,c.customer_id,c.status,c.created_by,c.created_at,classification,feedback';
+            $list = $this->Complaint_model->get_complaints_for_emp_new($new_where,$columns1,$startrow,$rowperpage , $likeArr);
+			// dd($list);
+
+			//////////
+			/*
+            $columns1 = 'c.id,c.company_id,c.ticket_no,c.ga_no,c.complaint_type,c.customer_id,c.status,c.created_by,c.created_at,classification,feedback';
             $list1 = $this->Complaint_model->get_complaints_for_emp_new($whereArr_a,$columns1,$startrow,$rowperpage , $likeArr);
-            // dd($this->pq());
+            
+			dd($list1);
+			// dd($this->pq());
             if (!empty($list1)) {
 			    foreach ($list1 as &$item1_a) {
 			        $item1_a['assign'] = 1;
@@ -97,6 +156,10 @@ class AdComplaint extends My_Controller
 
             $columns2 = 'id,ticket_no,ga_no,complaint_type,customer_id,status,created_by,created_at,classification,feedback';
 			$list2 = $this->Complaint_model->get_complaints($whereArr,$columns2,$startrow,$rowperpage , $likeArr);
+
+			// dd($list2);
+
+
 			if (!empty($list2)) {
 			    foreach ($list2 as &$item2_a) {
 			        $item2_a['assign'] = 0;
@@ -105,14 +168,19 @@ class AdComplaint extends My_Controller
 
             
             $list = array_merge($list1, $list2);
+
+			// dd($list);
             ## Total number of records without filtering
             $totalRecords = $this->Complaint_model->get_complaints_for_emp_new($assignWhere,'c.id','','', $likeArr);
             $totalRecords = count($totalRecords);
-
+			// dd($totalRecords);
             ## Total number of records with filtering
-            
+            // dd( $whereArr );
+
             $allres = $this->Complaint_model->get_complaints_for_emp_new($whereArr,'c.id',FALSE,FALSE, $likeArr);
             $totalRecordwithFilter = count($allres);
+			// dd($totalRecordwithFilter);
+			*/
 	  			
 		}
 
@@ -198,7 +266,7 @@ class AdComplaint extends My_Controller
 				
 
 				// echo '\n\n/n/n';
-			/*	if($action_taken == 'no' && $remark){
+				/*	if($action_taken == 'no' && $remark){
 					$unset = 1;
 				}
 				else if($action_taken == 'yes' && empty($remark)){
@@ -250,16 +318,25 @@ class AdComplaint extends My_Controller
 			}	
 			$list[$key]['created_by'] = $created_by;
 		}
-		//dd($list);
+		// dd($list);
 		// $list = array_values($list);
 
 		/*if($action_taken){
 			$totalRecords = $totalRecordwithFilter = count($list);
 		}*/
+		$response = array(
+			"draw" 					=> intval($draw),
+			"totalRecords" 			=> $totalRecords,
+			"totalRecordwithFilter" => $totalRecordwithFilter,
+			"aaData" 				=> $list
+		);
+
+
+		/*
 		if ($this->role == 'admin' || $this->role == 'employee') {
 			$login_user = "FIND_IN_SET('".$this->userid."', employees) > 0";
 			$company_n = $this->Company_model->get_all_company('','','','', '', '',$login_user);
-			//dd($company_n);
+			// dd($company_n);
 			if (empty($company_n)) {
 				//dd($list);
 				//$list=array();
@@ -269,7 +346,7 @@ class AdComplaint extends My_Controller
 				$filtered_array = array_filter($list, function($element) use ($company_names) {
 				    return isset($element['assign']) && $element['assign'] == 1 || in_array($element, $company_names);
 				});
-
+				// dd($filtered_array);
 				$response = array(
 				 	"draw" 					=> intval($draw),
 				 	"totalRecords" 			=> $totalRecords,
@@ -277,7 +354,7 @@ class AdComplaint extends My_Controller
 				 	"aaData" 				=> $filtered_array
 				);
 			}else{
-				//dd($list);
+				// dd($list);
 				foreach ($company_n as $item) {
 				    $company_names[] = cap($item['name']);
 				}
@@ -285,6 +362,7 @@ class AdComplaint extends My_Controller
 				$filtered_array = array_filter($list, function($element) use ($company_names) {
 				    return in_array($element['company'], $company_names) || (isset($element['assign']) && $element['assign'] == 1);
 				});
+				// dd($filtered_array);
 
 				$filtered_array = array_values(filter_unique_ticket_no($filtered_array));
 				//$filtered_array = array_values($filtered_array);
@@ -304,7 +382,7 @@ class AdComplaint extends My_Controller
 			 	"totalRecordwithFilter" => $totalRecordwithFilter,
 			 	"aaData" 				=> $list
 			);
-		}
+		}*/
 		//dd($response);
 
 		sendResponse(1, 'success', $response);

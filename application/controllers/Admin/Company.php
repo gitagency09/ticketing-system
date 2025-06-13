@@ -115,63 +115,95 @@ class Company extends My_Controller
         $data['name']       = $name;
         //$data['domain']     = $domain;
         $data['location']   = $location;
-        $data['employees']   = $employee_comma;
+        // $data['employees']   = $employee_comma;
         $data['status']     = 1;
         $data['created_by'] = $this->userid;
         $data['created_at'] = getDt();
 
         $insert = $this->Company_model->add_company($data);
-        if($insert){
-            $this->session->set_flashdata('message', array('status' => 1, 'message' => 'Company created successfully' ));
 
-            sendResponse(1,'Success');
-        }else{
-            sendResponse(0,' Failed to create company');
+        if ($insert) {
+            // Insert mappings into company_manager_mapping table
+            if (!empty($employee)) {
+                foreach ($employee as $user_id) {
+                    $mapping = [
+                        'company_id' => $insert,  // Assuming add_company returns the inserted company_id
+                        'user_id' => $user_id
+                    ];
+                    $this->db->insert('company_manager_mapping', $mapping);
+                }
+            }
+
+            $this->session->set_flashdata('message', array('status' => 1, 'message' => 'Company created successfully'));
+
+            sendResponse(1, 'Success');
+        } else {
+            sendResponse(0, 'Failed to create company');
         }
+        
     }//end store dept
 
 
     public function view($companyId) {
+        // Fetch the company
         $company = $this->Company_model->get_company(['id' => $companyId]);
-        if(!$company){
-            $this->sendFlashMsg(0,'Company data not found', 'company');
+        if (!$company) {
+            $this->sendFlashMsg(0, 'Company data not found', 'company');
         }
 
-        $employees_array = explode(",", $company['employees']);
-        $admin = $this->User_model->get_users('', '*', '', '', '', '', '',$employees_array);
-       
+        // Fetch employees from the mapping table
+        $this->db->select('u.*');
+        $this->db->from('company_manager_mapping cmm');
+        $this->db->join('users u', 'cmm.user_id = u.id');
+        $this->db->where('cmm.company_id', $companyId);
+        $employees = $this->db->get()->result_array();
+
+        // Prepare employee names string
         $first_names = '';
-        foreach ($admin as $user) {
-            $first_names .= $user['first_name'].' '.$user['last_name'].' ('.$user['role']. '), ';
+        foreach ($employees as $user) {
+            $first_names .= $user['first_name'] . ' ' . $user['last_name'] . ' (' . $user['role'] . '), ';
         }
 
         $first_names = rtrim($first_names, ', ');
 
+        // Prepare view data
         $data = [];
-        $data['template']   = 'company/company_view';
-        $data['title']      = "View Company";
-        $data['data']       = $company;
+        $data['template'] = 'company/company_view';
+        $data['title'] = "View Company";
+        $data['data'] = $company;
         $data['employees_array'] = $first_names;
-        // echo "<pre>";
-        // print_r($data);
-        // exit;
+
+        // Load the view
         $this->load->view('default', $data);
-    }   
+    }
 
     public function edit($companyId) {
         $company = $this->Company_model->get_company(['id' => $companyId]);
         if(!$company){
             $this->sendFlashMsg(0,'Company data not found', 'company');
         }
-        $employees_array = explode(",", $company['employees']);
-        $admin = $this->User_model->get_users('', '*', '', '', '', '', '',$employees_array);
-       
-        $first_names = '';
-        foreach ($admin as $user) {
-            $first_names .= $user['first_name'].' '.$user['last_name'].' ['.$user['id'].']('.$user['role']. '), ';
+        
+        // Step 1: Get employee IDs from mapping table
+        $this->db->select('user_id');
+        $this->db->from('company_manager_mapping');
+        $this->db->where('company_id', $companyId);
+        $query = $this->db->get();
+        $employeeIds = array_column($query->result_array(), 'user_id');
+
+        // Step 2: Get employee details
+        $admin = [];
+        if (!empty($employeeIds)) {
+            $admin = $this->User_model->get_users('', '*', '', '', '', '', '', $employeeIds);
         }
 
+        // Step 3: Prepare employee names string
+        $first_names = '';
+        foreach ($admin as $user) {
+            $first_names .= $user['first_name'] . ' ' . $user['last_name'] . ' [' . $user['id'] . '](' . $user['role'] . '), ';
+        }
         $first_names = rtrim($first_names, ', ');
+
+        
 
         $roles = ['admin', 'employee']; // Add the roles you want to retrieve
         $admin = $this->User_model->get_users('', '*', '', '', '', '', $roles);
@@ -203,7 +235,6 @@ class Company extends My_Controller
     }   
 
     public function update($companyId){
-
         $_POST['companyId'] = $companyId;
 
         $this->form_validation->set_rules('companyId', 'Company id', 'required|integer|exists[company.id]');
@@ -226,37 +257,74 @@ class Company extends My_Controller
         //$domain                 =  trim($this->input->post('domain',TRUE));
         $location               =  trim($this->input->post('location',TRUE));
         $status                 =  trim($this->input->post('status',TRUE));
-        $employee               =  $this->input->post('Employee_add');
-        $already_emp               =  $this->input->post('already_emp');
+      
+        $employee = $this->input->post('Employee_add'); // New employees (expected to be an array)
+        $already_emp = $this->input->post('already_emp'); // This might be a comma-separated string
+
+        // If $already_emp is a comma-separated string, convert to array
+        if (!is_array($already_emp)) {
+            $already_emp = explode(',', $already_emp);
+        }
+
+        // Similarly, ensure $employee is an array
+        if (!is_array($employee)) {
+            $employee = explode(',', $employee);
+        }
+
+        $final_employee_ids = [];
+
+        // Merge existing employees (if any)
+        if (!empty($already_emp) && $already_emp[0] != '') {
+            $final_employee_ids = array_merge($final_employee_ids, $already_emp);
+        }
+
+        // Merge newly added employees (if any)
+        if (!empty($employee) && $employee[0] != '') {
+            $final_employee_ids = array_merge($final_employee_ids, $employee);
+        }
+
+        // Remove duplicates
+        $final_employee_ids = array_unique($final_employee_ids);
+
+
         // $isInvalid = $this->validateDomain($domain);
         // if($isInvalid){
         //     sendResponse(0, $isInvalid);
         // }
         //end validation
-        $added_emp = $already_emp;
-        if ($employee[0] != '') {
-            $employee_comma = implode(",", $employee);
-            $added_emp = $employee_comma.','.$already_emp;
-        }
+       
         //Store
         $data = [];
         $data['name']       = $name;
         //$data['domain']     = $domain;
         $data['location']   = $location;
-        $data['employees']  = $added_emp;
         $data['status']     = $status;
         $data['updated_by'] = $this->userid;
         $data['created_at'] = getDt();
 
         $where = ['id' => $companyId];
-        $insert = $this->Company_model->update_company($where,$data);
-        if($insert){
-            $this->session->set_flashdata('message', array('status' => 1, 'message' => 'Company updated successfully' ));
+        $update = $this->Company_model->update_company($where,$data);
+        
+        if ($update) {
+            // Always delete existing mappings
+            $this->db->where('company_id', $companyId)->delete('company_manager_mapping');
 
-            sendResponse(1,'Success');
-        }else{
-            sendResponse(0,' Failed to create company');
+            // Insert the merged (final) employee mappings
+            foreach ($final_employee_ids as $userId) {
+                $this->db->insert('company_manager_mapping', [
+                    'company_id' => $companyId,
+                    'user_id' => $userId
+                ]);
+            }
+
+            $this->session->set_flashdata('message', array('status' => 1, 'message' => 'Company updated successfully'));
+            sendResponse(1, 'Success');
+        } else {
+            sendResponse(0, 'Failed to update company');
         }
+
+
+
     }//end store dept
 
 

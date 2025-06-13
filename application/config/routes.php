@@ -197,7 +197,7 @@ $route['enquiry/remark']['post'] 			= 'Admin/AdEnquiry/remark/$1';
 $route['customer/dashboard'] = 'Customer/CuDashboard';
 
 
-$route['customer/login'] 				= 'Customer/CuAuth/login';
+// $route['customer/login'] 				= 'Customer/CuAuth/login';
 $route['customer/register'] 			= 'Customer/CuAuth/register';
 $route['customer/verifyDetails'] 		= 'Customer/CuAuth/verifyDetails';
 $route['customer/verifyCode'] 			= 'Customer/CuAuth/verifyCode';
