@@ -98,7 +98,7 @@ class Reports extends My_Controller
 		}
 		
 		$action_taken = '';
-		if($this->role == 'admin' || $this->role == 'super_admin'){
+		if($this->role == 'super_admin'){
 
 			## Total number of records without filtering
 			$allres  = $this->Complaint_model->count();
@@ -111,6 +111,30 @@ class Reports extends My_Controller
 			$columns = 'id,ticket_no,company_id,complaint_type,description,customer_id,status,created_by,created_at,updated_at,classification,time';
 			$list = $this->Complaint_model->get_complaints($whereArr,$columns,$startrow,$rowperpage , $likeArr);
 			//dd($list);
+		}
+		else if($this->role == 'admin'){
+			$conditions = [];
+
+			$this->load->model('Company_manager_mapping_model');
+			$company_ids = $this->Company_manager_mapping_model->get_company_ids_by_user($this->userid);
+
+			
+			if (!empty($company_ids)) {
+				$conditions['company_id'] = $company_ids;  // This will trigger where_in
+			}
+			
+
+			## Total number of records without filtering
+			$allres  = $this->Complaint_model->get_complaints('','id','','' ,'', $conditions);
+			$totalRecords = count($allres);
+
+			## Total number of records with filtering
+			$allres  = $this->Complaint_model->get_complaints($whereArr,'id','','' ,$likeArr, $conditions);
+			$totalRecordwithFilter = count($allres);
+
+			$columns = 'id,ticket_no,company_id,ga_no,complaint_type,description,customer_id,status,created_by,created_at,updated_at,classification,feedback,time';
+			$list = $this->Complaint_model->get_complaints($whereArr,$columns,$startrow,$rowperpage , $likeArr, $conditions);
+			// dd($list);
 		}else{
 			$whereArr_a['h.emp_id'] = $this->userid;
             $whereArr_a['h.type'] = 'assign';
@@ -307,10 +331,10 @@ class Reports extends My_Controller
         $from_date = $this->input->get('from_date');
 		$to_date   = $this->input->get('to_date');
 		if($this->role == 'admin' || $this->role == 'super_admin'){
-			$params = $this->searchParam(['status','ticket_no','company_id','complaint_type','classification']);
+			$params = $this->searchParam(['status','ticket_no','company_id','complaint_type','classification','company_id']);
 
 		} else{
-			$params = $this->searchParam(['status','ticket_no','company_id','complaint_type','classification','action']);
+			$params = $this->searchParam(['status','ticket_no','company_id','complaint_type','classification','action','company_id']);
 		}
 
 		$whereArr 	= $params['where'];
