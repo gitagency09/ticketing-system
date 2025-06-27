@@ -57,10 +57,10 @@ $ratings = json_decode($feedback['rating'],true);
   if (strstr($feedback['period'], 'to')) {
      $dateArr = explode("to", $feedback['period']);
      if(isset($dateArr[0]) && $dateArr[0] != ''){
-        $from = custDate(trim($dateArr[0]));
+        $from = custDate(safe_trim($dateArr[0]));
      }
      if(isset($dateArr[1]) && $dateArr[1] != ''){
-        $to = custDate(trim($dateArr[1]));
+        $to = custDate(safe_trim($dateArr[1]));
      }
      $visit_date = $from.' to '.$to;
   }else{

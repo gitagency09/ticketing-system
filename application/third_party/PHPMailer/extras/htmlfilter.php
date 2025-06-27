@@ -598,11 +598,11 @@ function tln_fixatts(
 function tln_fixurl($attname, &$attvalue, $trans_image_path, $block_external_images)
 {
     $sQuote = '"';
-    $attvalue = trim($attvalue);
+    $attvalue = safe_trim($attvalue);
     if ($attvalue && ($attvalue[0] =='"'|| $attvalue[0] == "'")) {
         // remove the double quotes
         $sQuote = $attvalue[0];
-        $attvalue = trim(substr($attvalue,1,-1));
+        $attvalue = safe_trim(substr($attvalue,1,-1));
     }
 
     /**

@@ -240,7 +240,7 @@ class SMTP
                 echo gmdate('Y-m-d H:i:s') . "\t" . str_replace(
                     "\n",
                     "\n                   \t                  ",
-                    trim($str)
+                    safe_trim($str)
                 ) . "\n";
         }
     }
@@ -764,7 +764,7 @@ class SMTP
 
         foreach ($lines as $n => $s) {
             //First 4 chars contain response code followed by - or space
-            $s = trim(substr($s, 4));
+            $s = safe_trim(substr($s, 4));
             if (empty($s)) {
                 continue;
             }

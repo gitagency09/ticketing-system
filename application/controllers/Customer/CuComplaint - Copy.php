@@ -49,11 +49,11 @@ class CuComplaint extends My_Controller
 	}
 
 	public function searchComplaint() {
-		$ga_no 					=  trim($this->input->get('ga_no',TRUE));
-		$ticket_no 				=  trim($this->input->get('ticket_no',TRUE));
-		$complaint_type 		=  trim($this->input->get('type',TRUE));
-		$status 				=  trim($this->input->get('status',TRUE));
-		$cust_equi_no 			=  trim($this->input->get('cust_equi_no',TRUE));
+		$ga_no 					=  safe_trim($this->input->get('ga_no',TRUE));
+		$ticket_no 				=  safe_trim($this->input->get('ticket_no',TRUE));
+		$complaint_type 		=  safe_trim($this->input->get('type',TRUE));
+		$status 				=  safe_trim($this->input->get('status',TRUE));
+		$cust_equi_no 			=  safe_trim($this->input->get('cust_equi_no',TRUE));
 
 		
 
@@ -139,13 +139,13 @@ class CuComplaint extends My_Controller
 		$data 		= [];
 		$file_array = [];
 
-		$ga_no 					=  trim($this->input->post('ga_no',TRUE));
-		$complaint_type 		=  trim($this->input->post('complaint_type',TRUE));
-		$description 			=  trim($this->input->post('description',TRUE));
-		$cust_equipment_no 		=  trim($this->input->post('cust_equipment_no',TRUE));
+		$ga_no 					=  safe_trim($this->input->post('ga_no',TRUE));
+		$complaint_type 		=  safe_trim($this->input->post('complaint_type',TRUE));
+		$description 			=  safe_trim($this->input->post('description',TRUE));
+		$cust_equipment_no 		=  safe_trim($this->input->post('cust_equipment_no',TRUE));
 		$from_date 				=  $this->input->post('from_date',TRUE);
 		$to_date 				=  $this->input->post('to_date',TRUE);
-		$order_no 				=  trim($this->input->post('order_no',TRUE));
+		$order_no 				=  safe_trim($this->input->post('order_no',TRUE));
 		$email_cc 				=  $this->input->post('email_cc',TRUE);
 		
 		$email_arr = [];
@@ -520,8 +520,8 @@ class CuComplaint extends My_Controller
 
 
 	public function remark(){
-		$complaint_id 	= trim($this->input->post('complaint_id',TRUE));
-		$new_status 	= trim($this->input->post('status',TRUE));
+		$complaint_id 	= safe_trim($this->input->post('complaint_id',TRUE));
+		$new_status 	= safe_trim($this->input->post('status',TRUE));
 
 		//Start validation
 		$this->form_validation->set_rules('complaint_id', 'Complaint', 'required');
@@ -632,7 +632,7 @@ class CuComplaint extends My_Controller
 	public function comment(){
 		$this->load->model('ComplaintHistory_model');
 
-		$complaint_id 	= trim($this->input->post('complaint_id',TRUE));
+		$complaint_id 	= safe_trim($this->input->post('complaint_id',TRUE));
 
 		//Start validation
 		$this->form_validation->set_rules('complaint_id', 'Complaint', 'required|exists[complaint.id]');
@@ -691,7 +691,7 @@ class CuComplaint extends My_Controller
 		$data 						= [];
 		$data['complaint_id'] 		= $complaint_id;
 		$data['type'] 				= 'customer_comment';
-		$data['remark'] 			= trim($this->input->post('comment',TRUE));
+		$data['remark'] 			= safe_trim($this->input->post('comment',TRUE));
 		$data['mom_doc'] 			= $file_name;
 		$data['created_by'] 		= $this->userid;
 		$data['created_at'] 		= getDt();
@@ -753,7 +753,7 @@ class CuComplaint extends My_Controller
 	public function escalation(){
 		$this->load->model('ComplaintHistory_model');
 
-		$complaint_id 	= trim($this->input->post('complaint_id',TRUE));
+		$complaint_id 	= safe_trim($this->input->post('complaint_id',TRUE));
 
 		//Start validation
 		$this->form_validation->set_rules('complaint_id', 'Complaint', 'required|exists[complaint.id]');
@@ -791,7 +791,7 @@ class CuComplaint extends My_Controller
 		$data 						= [];
 		$data['complaint_id'] 		= $complaint_id;
 		$data['type'] 				= 'customer_escalation';
-		$data['remark'] 			= trim($this->input->post('remark',TRUE));
+		$data['remark'] 			= safe_trim($this->input->post('remark',TRUE));
 		$data['created_by'] 		= $this->userid;
 		$data['created_at'] 		= getDt();
 		

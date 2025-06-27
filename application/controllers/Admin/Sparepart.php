@@ -138,10 +138,10 @@ class Sparepart extends My_Controller
 
 	public function store(){
 
-		$equi_id 	= trim($this->input->post('equipment',TRUE));
+		$equi_id 	= safe_trim($this->input->post('equipment',TRUE));
 		$model 		= $this->input->post('model',TRUE);
-		$sparepart 	= trim($this->input->post('name',TRUE));
-		$unit 	= trim($this->input->post('unit',TRUE));
+		$sparepart 	= safe_trim($this->input->post('name',TRUE));
+		$unit 	= safe_trim($this->input->post('unit',TRUE));
 
 		$this->form_validation->set_rules('equipment', 'Equipment', 'required|exists[equipment.id]');
 		$this->form_validation->set_rules('name', 'Name', 'required');
@@ -174,7 +174,7 @@ class Sparepart extends My_Controller
 			if(json_last_error() == JSON_ERROR_NONE && is_array($model_list)){
 					
 				foreach ($model as $key => $value) {
-					if(!in_array(trim($value), $model_list)){
+					if(!in_array(safe_trim($value), $model_list)){
 						sendResponse(0,'Invalid Equipment model ['.$value.'].');
 					}
 				}//end foreach
@@ -251,10 +251,10 @@ class Sparepart extends My_Controller
 	}	
 
 	public function update($id){
-		$equi_id 		= trim($this->input->post('equipment',TRUE));
+		$equi_id 		= safe_trim($this->input->post('equipment',TRUE));
 		$model 			= $this->input->post('model',TRUE);
-		$sparepart 		= trim($this->input->post('name',TRUE));
-		$unit 		= trim($this->input->post('unit',TRUE));
+		$sparepart 		= safe_trim($this->input->post('name',TRUE));
+		$unit 		= safe_trim($this->input->post('unit',TRUE));
 
 		$_POST['id'] = $id;
 
@@ -290,7 +290,7 @@ class Sparepart extends My_Controller
 			if(json_last_error() == JSON_ERROR_NONE && is_array($model_list)){
 					
 				foreach ($model as $key => $value) {
-					if(!in_array(trim($value), $model_list)){
+					if(!in_array(safe_trim($value), $model_list)){
 						sendResponse(0,'Invalid Equipment model ['.$value.'].');
 					}
 				}
@@ -307,7 +307,7 @@ class Sparepart extends My_Controller
         $data['unit'] 			=  $unit;
         $data['equipment_id'] 	=  $equi_id;
         $data['model'] 			=  json_encode($model);
-		$data['status'] 		= trim($this->input->post('status',TRUE));;
+		$data['status'] 		= safe_trim($this->input->post('status',TRUE));;
 		$data['updated_by'] 	= $this->userid;
 
 

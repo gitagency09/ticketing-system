@@ -53,8 +53,8 @@ class Designation extends My_Controller
         	sendResponse(0, validation_errors());
         }
 
-        $name 					=  trim($this->input->post('name',TRUE));
-		$status 				=  trim($this->input->post('status',TRUE));
+        $name 					=  safe_trim($this->input->post('name',TRUE));
+		$status 				=  safe_trim($this->input->post('status',TRUE));
       	
         //Store
         $data = [];
@@ -114,8 +114,8 @@ class Designation extends My_Controller
         	sendResponse(0, validation_errors());
         }
 
-        $name 					=  trim($this->input->post('name',TRUE));
-		$status 				=  trim($this->input->post('status',TRUE));
+        $name 					=  safe_trim($this->input->post('name',TRUE));
+		$status 				=  safe_trim($this->input->post('status',TRUE));
       	
         //Store
         $data = [];

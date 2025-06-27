@@ -318,7 +318,7 @@ class My_Controller extends CI_Controller {
 				$msg = 'Company domain is not registered';
         	}else{
         		//validate with email
-        		$split = explode("@",trim($email));
+        		$split = explode("@",safe_trim($email));
         		if($split[1] != $domain){
         			$flag = 0;
 					$msg = 'Email id does not match with Company domain';
@@ -365,8 +365,8 @@ class My_Controller extends CI_Controller {
 						$newkey = $value;
 					}
 
-					if(trim($this->input->get($value,TRUE)) != ''){
-						$whereArr[$newkey] =trim($this->input->get($value,TRUE));
+					if(safe_trim($this->input->get($value,TRUE)) != ''){
+						$whereArr[$newkey] =safe_trim($this->input->get($value,TRUE));
 					}
 				}
 			}
@@ -380,8 +380,8 @@ class My_Controller extends CI_Controller {
 						$newkey = $value;
 					}
 					
-					if(trim($this->input->get($value,TRUE)) != ''){
-						$likeArr[$newkey] =trim($this->input->get($value,TRUE));
+					if(safe_trim($this->input->get($value,TRUE)) != ''){
+						$likeArr[$newkey] =safe_trim($this->input->get($value,TRUE));
 					}
 				}
 			}

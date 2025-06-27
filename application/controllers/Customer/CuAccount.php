@@ -96,11 +96,11 @@ class CuAccount extends My_Controller
 
         //Store
         $data = [];
-        $data['first_name'] 		=  trim($this->input->post('first_name',TRUE));
-        $data['last_name'] 			=  trim($this->input->post('last_name',TRUE));
-        $data['mobile'] 			=  trim($this->input->post('mobile',TRUE));
-        $data['country_code'] 		=  trim($this->input->post('country_code',TRUE));
-        $data['location'] 			=  trim($this->input->post('location',TRUE));
+        $data['first_name'] 		=  safe_trim($this->input->post('first_name',TRUE));
+        $data['last_name'] 			=  safe_trim($this->input->post('last_name',TRUE));
+        $data['mobile'] 			=  safe_trim($this->input->post('mobile',TRUE));
+        $data['country_code'] 		=  safe_trim($this->input->post('country_code',TRUE));
+        $data['location'] 			=  safe_trim($this->input->post('location',TRUE));
         $data['profile_picture'] 	=  $file_name;
 		$data['updated_by'] 		= $this->userid;
 

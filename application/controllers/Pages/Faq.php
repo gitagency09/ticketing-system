@@ -193,7 +193,7 @@ class Faq extends My_Controller
 
         //Store
         $data = [];
-        $data['title'] 		= trim($this->input->post('name',TRUE));
+        $data['title'] 		= safe_trim($this->input->post('name',TRUE));
 		$data['top_cat'] 	= 1;
 		$data['page_type'] 	= 'faq';
 		$data['status'] 	= 1;
@@ -239,8 +239,8 @@ class Faq extends My_Controller
 
         //Store
         $data = [];
-        $data['title'] 		= trim($this->input->post('name',TRUE));
-		$data['status'] 	= trim($this->input->post('status',TRUE));
+        $data['title'] 		= safe_trim($this->input->post('name',TRUE));
+		$data['status'] 	= safe_trim($this->input->post('status',TRUE));
 		$data['updated_by'] = $this->userid;
 
 		$where = ['id' => $catId];
@@ -302,9 +302,9 @@ class Faq extends My_Controller
 
         if($faqs){
         	foreach ($faqs as $key => $value) {
-        		$title = trim($value['title']);
-        		$desc = trim($value['desc']);
-        		$order = trim($value['order']);
+        		$title = safe_trim($value['title']);
+        		$desc = safe_trim($value['desc']);
+        		$order = safe_trim($value['order']);
         		
         		$value['order'] = (int)$order;
 
@@ -330,9 +330,9 @@ class Faq extends My_Controller
 
         //Store
         $data = [];
-        $data['title'] 		= trim($this->input->post('name',TRUE));
+        $data['title'] 		= safe_trim($this->input->post('name',TRUE));
 		$data['top_cat'] 	= 0;
-		$data['parent'] 	= trim($this->input->post('category',TRUE));
+		$data['parent'] 	= safe_trim($this->input->post('category',TRUE));
 		$data['page_type'] 	= 'faq';
 		$data['content'] 	= json_encode($faq_list);
 		$data['status'] 	= 1;
@@ -377,7 +377,7 @@ class Faq extends My_Controller
         }
 
         //validate parent cat
-        $parent_cat_id = trim($this->input->post('category',TRUE));
+        $parent_cat_id = safe_trim($this->input->post('category',TRUE));
         $parent_category = $this->Pages_model->get_page(['id' => $parent_cat_id, 'page_type' => 'faq', 'top_cat' => 1],'id,title');
 
         if(!$parent_category){
@@ -396,9 +396,9 @@ class Faq extends My_Controller
 
         if($faqs){
         	foreach ($faqs as $key => $value) {
-        		$title = trim($value['title']);
-        		$desc = trim($value['desc']);
-        		$order = trim($value['order']);
+        		$title = safe_trim($value['title']);
+        		$desc = safe_trim($value['desc']);
+        		$order = safe_trim($value['order']);
         		
         		$value['order'] = (int)$order;
 
@@ -422,10 +422,10 @@ class Faq extends My_Controller
 
         //Store
         $data = [];
-        $data['title'] 		= trim($this->input->post('name',TRUE));
+        $data['title'] 		= safe_trim($this->input->post('name',TRUE));
         $data['parent'] 	= $parent_cat_id;
         $data['content'] 	= json_encode($faq_list);
-		$data['status'] 	= trim($this->input->post('status',TRUE));
+		$data['status'] 	= safe_trim($this->input->post('status',TRUE));
 		$data['updated_by'] = $this->userid;
 
 		$where = ['id' => $subcatId];

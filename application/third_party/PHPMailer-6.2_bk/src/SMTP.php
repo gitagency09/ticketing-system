@@ -288,12 +288,12 @@ class SMTP
                 echo gmdate('Y-m-d H:i:s'),
                 "\t",
                     //Trim trailing space
-                trim(
+                safe_trim(
                     //Indent for readability, except for trailing break
                     str_replace(
                         "\n",
                         "\n                   \t                  ",
-                        trim($str)
+                        safe_trim($str)
                     )
                 ),
                 "\n";
@@ -848,7 +848,7 @@ class SMTP
 
         foreach ($lines as $n => $s) {
             //First 4 chars contain response code followed by - or space
-            $s = trim(substr($s, 4));
+            $s = safe_trim(substr($s, 4));
             if (empty($s)) {
                 continue;
             }
@@ -1257,7 +1257,7 @@ class SMTP
 
             //Deliberate noise suppression - errors are handled afterwards
             $str = @fgets($this->smtp_conn, self::MAX_REPLY_LENGTH);
-            $this->edebug('SMTP INBOUND: "' . trim($str) . '"', self::DEBUG_LOWLEVEL);
+            $this->edebug('SMTP INBOUND: "' . safe_trim($str) . '"', self::DEBUG_LOWLEVEL);
             $data .= $str;
             //If response is only 3 chars (not valid, but RFC5321 S4.2 says it must be handled),
             //or 4th character is a space or a line break char, we are done reading, break the loop.
@@ -1428,7 +1428,7 @@ class SMTP
             foreach ($this->smtp_transaction_id_patterns as $smtp_transaction_id_pattern) {
                 $matches = [];
                 if (preg_match($smtp_transaction_id_pattern, $reply, $matches)) {
-                    $this->last_smtp_transaction_id = trim($matches[1]);
+                    $this->last_smtp_transaction_id = safe_trim($matches[1]);
                     break;
                 }
             }

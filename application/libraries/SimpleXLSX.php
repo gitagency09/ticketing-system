@@ -430,7 +430,7 @@ class SimpleXLSX {
 
 			foreach ( $relations->Relationship as $rel ) {
 
-				$rel_type   = basename( trim( (string) $rel['Type'] ) ); // officeDocument
+				$rel_type   = basename( safe_trim( (string) $rel['Type'] ) ); // officeDocument
 				$rel_target = $this->_getTarget( '', (string) $rel['Target'] ); // /xl/workbook.xml or xl/workbook.xml
 
 				if ( $rel_type === 'officeDocument' && $workbook = $this->getEntryXML( $rel_target ) ) {
@@ -453,7 +453,7 @@ class SimpleXLSX {
 						// Loop relations for workbook and extract sheets...
 						foreach ( $workbookRelations->Relationship as $workbookRelation ) {
 
-							$wrel_type = basename( trim( (string) $workbookRelation['Type'] ) );
+							$wrel_type = basename( safe_trim( (string) $workbookRelation['Type'] ) );
 							$wrel_path = $this->_getTarget( dirname( $rel_target ), (string) $workbookRelation['Target'] );
 							if ( ! $this->entryExists( $wrel_path ) ) {
 								continue;
@@ -532,7 +532,7 @@ class SimpleXLSX {
 	*/
 	public function getEntryXML( $name ) {
 		if ( $entry_xml = $this->getEntryData( $name ) ) {
-			$entry_xml = trim( $entry_xml );
+			$entry_xml = safe_trim( $entry_xml );
 			// dirty remove namespace prefixes and empty rows
 			$entry_xml = preg_replace( '/xmlns[^=]*="[^"]*"/i', '', $entry_xml ); // remove namespaces
 			$entry_xml = preg_replace( '/[a-zA-Z0-9]+:([a-zA-Z0-9]+="[^"]+")/', '$1$2', $entry_xml ); // remove namespaced attrs
@@ -760,7 +760,7 @@ class SimpleXLSX {
 					// hyperlink
 //					$rel_base = dirname( $sheet_rels );
 					foreach ( $rels->Relationship as $rel ) {
-						$rel_type   = basename( trim( (string) $rel['Type'] ) );
+						$rel_type   = basename( safe_trim( (string) $rel['Type'] ) );
 						if ( $rel_type === 'hyperlink' ) {
 							$rel_id = (string) $rel['Id'];
 							$rel_target = (string) $rel['Target'];
@@ -1056,7 +1056,7 @@ class SimpleXLSX {
 	}
 
 	private function _getTarget( $base, $target ) {
-		$target = trim( $target );
+		$target = safe_trim( $target );
 		if ( strpos( $target, '/' ) === 0 ) {
 			return $this->_substr( $target, 1 );
 		}

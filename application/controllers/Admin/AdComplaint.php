@@ -461,15 +461,15 @@ class AdComplaint extends My_Controller
 		$data 		= [];
 		$file_array = [];
 
-		$company_id				=  trim($this->input->post('company',TRUE));
-		$customer_id 			=  trim($this->input->post('customer',TRUE));
-		$ga_no 					=  trim($this->input->post('ga_no',TRUE));
-		$complaint_type 		=  trim($this->input->post('complaint_type',TRUE));
-		$description 			=  trim($this->input->post('description',TRUE));
-		$cust_equipment_no 		=  trim($this->input->post('cust_equipment_no',TRUE));
+		$company_id				=  safe_trim($this->input->post('company',TRUE));
+		$customer_id 			=  safe_trim($this->input->post('customer',TRUE));
+		$ga_no 					=  safe_trim($this->input->post('ga_no',TRUE));
+		$complaint_type 		=  safe_trim($this->input->post('complaint_type',TRUE));
+		$description 			=  safe_trim($this->input->post('description',TRUE));
+		$cust_equipment_no 		=  safe_trim($this->input->post('cust_equipment_no',TRUE));
 		$from_date 				=  $this->input->post('from_date',TRUE);
 		$to_date 				=  $this->input->post('to_date',TRUE);
-		$order_no 				=  trim($this->input->post('order_no',TRUE));
+		$order_no 				=  safe_trim($this->input->post('order_no',TRUE));
 		$email_cc 				=  $this->input->post('email_cc',TRUE);
 		
 		$email_arr = [];
@@ -955,7 +955,7 @@ class AdComplaint extends My_Controller
 			// $isDuplicate = $this->ComplaintHistory_model->get_complaint_history(['complaint_id' =>$complaint_id, 'emp_id' => $empid, 'type'=>'assign','assigned_by' => $assigned_by]);
 			$isDuplicate = $this->ComplaintHistory_model->get_complaint_history(['complaint_id' =>$complaint_id, 'emp_id' => $empid, 'type'=>'assign']);
 			if($isDuplicate){
-				if(trim($isDuplicate['solution']) == ''){
+				if(safe_trim($isDuplicate['solution']) == ''){
 					sendResponse(0, 'Assign'.($key+1).' : You can not assign to same employee');
 				}
 			}
@@ -1142,22 +1142,22 @@ class AdComplaint extends My_Controller
 	}
 
 	public function remark(){
-		$complaint_id 	= trim($this->input->post('complaint_id',TRUE));
-		$new_status 	= trim($this->input->post('status',TRUE));
-		$action_type 	= trim($this->input->post('action_type',TRUE));
+		$complaint_id 	= safe_trim($this->input->post('complaint_id',TRUE));
+		$new_status 	= safe_trim($this->input->post('status',TRUE));
+		$action_type 	= safe_trim($this->input->post('action_type',TRUE));
 		$new_hours = 0;
 		$new_minutes = 0;
 
 		if ($new_status == 1) {
-		    $new_hours   = (int) trim($this->input->post('hours', TRUE));
-		    $new_minutes = (int) trim($this->input->post('minutes', TRUE));
+		    $new_hours   = (int) safe_trim($this->input->post('hours', TRUE));
+		    $new_minutes = (int) safe_trim($this->input->post('minutes', TRUE));
 		}
 
 		$new_time = str_pad($new_hours, 2, '0', STR_PAD_LEFT) . ':' . str_pad($new_minutes, 2, '0', STR_PAD_LEFT);
 		if ($new_time === '00:00') {
 		    $new_time = NULL;
 		}
-		//$visit_date 	= trim($this->input->post('visit_date',TRUE));
+		//$visit_date 	= safe_trim($this->input->post('visit_date',TRUE));
 		$complaint = $this->Complaint_model->get_complaint(['id' => $complaint_id]);
 		$prev_status 	= $complaint['status'];
 
@@ -1255,7 +1255,7 @@ class AdComplaint extends My_Controller
 		$data 						= [];
 		$data['complaint_id'] 		= $complaint_id;
 		$data['emp_id'] 			= $this->userid;
-		$data['remark'] 			= trim($this->input->post('remark',TRUE));
+		$data['remark'] 			= safe_trim($this->input->post('remark',TRUE));
 		$data['type'] 				= 'remark';
 		$data['reply_to'] 			= 'customer';
 		$data['mom_doc'] 			= $file_name;
@@ -1328,9 +1328,9 @@ class AdComplaint extends My_Controller
 	}//end remark
 
 	public function remarkEmp(){
-		$complaint_id 	= trim($this->input->post('complaint_id',TRUE));
-		$new_status 	= trim($this->input->post('status',TRUE));
-		//$visit_date 	= trim($this->input->post('visit_date',TRUE));
+		$complaint_id 	= safe_trim($this->input->post('complaint_id',TRUE));
+		$new_status 	= safe_trim($this->input->post('status',TRUE));
+		//$visit_date 	= safe_trim($this->input->post('visit_date',TRUE));
 
 		$complaint = $this->Complaint_model->get_complaint(['id' => $complaint_id]);
 		$prev_status 	= $complaint['status'];
@@ -1410,7 +1410,7 @@ class AdComplaint extends My_Controller
 		$data 						= [];
 		$data['complaint_id'] 		= $complaint_id;
 		$data['emp_id'] 			= $this->userid;
-		$data['remark'] 			= trim($this->input->post('remark',TRUE));
+		$data['remark'] 			= safe_trim($this->input->post('remark',TRUE));
 		$data['type'] 				= 'remark';
 		$data['reply_to'] 			= 'employee';
 		$data['mom_doc'] 			= $file_name;
@@ -1708,7 +1708,7 @@ class AdComplaint extends My_Controller
 
 		$this->is_employee(1);
 
-		$complaint_id 	= trim($this->input->post('complaint_id',TRUE));
+		$complaint_id 	= safe_trim($this->input->post('complaint_id',TRUE));
 
 		//Start validation
 		$this->form_validation->set_rules('complaint_id', 'Complaint', 'required|exists[complaint.id]');
@@ -1772,8 +1772,8 @@ class AdComplaint extends My_Controller
 		     		
 		//update
 		$data 						= [];
-		$data['solution'] 			= trim($this->input->post('remark',TRUE));
-		// $data['mom_text'] 			= trim($this->input->post('mom_text',TRUE));
+		$data['solution'] 			= safe_trim($this->input->post('remark',TRUE));
+		// $data['mom_text'] 			= safe_trim($this->input->post('mom_text',TRUE));
 		$data['mom_doc'] 			= $file_name;
 		$data['updated_by'] 		= $this->userid;
 		
@@ -1895,8 +1895,8 @@ class AdComplaint extends My_Controller
 
 	public function classification(){
 
-		$complaint_id 	= trim($this->input->post('complaint_id',TRUE));
-		$class 			= trim($this->input->post('class',TRUE));
+		$complaint_id 	= safe_trim($this->input->post('complaint_id',TRUE));
+		$class 			= safe_trim($this->input->post('class',TRUE));
 
 		$classifications = classifications();
 

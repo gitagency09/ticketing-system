@@ -462,7 +462,7 @@ function esc_sql($text)
 }
 
 function clean_cell_formula($string){
-    $string = ltrim(trim($string), "=+-@");
+    $string = ltrim(safe_trim($string), "=+-@");
     return $string;
 }
 
@@ -476,4 +476,10 @@ function filter_unique_ticket_no($array) {
             return true;
         }
     });
+}
+
+if (!function_exists('safe_trim')) {
+    function safe_trim($string, $character_mask = " \t\n\r\0\x0B") {
+        return trim($string ?? '', $character_mask);
+    }
 }

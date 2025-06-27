@@ -192,7 +192,7 @@ class Forgotpass extends My_Controller
 
         //Store
         $data = [];
-        $data['title'] 		= trim($this->input->post('title',TRUE));
+        $data['title'] 		= safe_trim($this->input->post('title',TRUE));
         $data['image'] 		= json_encode($file_array);
 		$data['updated_by'] = $this->userid;
 

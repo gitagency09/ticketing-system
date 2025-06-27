@@ -121,17 +121,17 @@ class Customer extends My_Controller
         // 	sendResponse(0, $valid['message']);
         // }
         //Store
-        $password = trim($this->input->post('password',TRUE));
+        $password = safe_trim($this->input->post('password',TRUE));
 
         $data = [];
-        $data['first_name'] 		=  trim($this->input->post('first_name',TRUE));
-        $data['last_name'] 			=  trim($this->input->post('last_name',TRUE));
-        $data['email'] 				=  trim($this->input->post('email',TRUE));
+        $data['first_name'] 		=  safe_trim($this->input->post('first_name',TRUE));
+        $data['last_name'] 			=  safe_trim($this->input->post('last_name',TRUE));
+        $data['email'] 				=  safe_trim($this->input->post('email',TRUE));
         $data['password'] 			=  hash('sha256', $password);
-        $data['mobile'] 			=  trim($this->input->post('mobile',TRUE));
-        $data['country_code'] 		=  trim($this->input->post('country_code',TRUE));
-        $data['company_id'] 		=  trim($this->input->post('company',TRUE));
-        $data['location'] 			=  trim($this->input->post('location',TRUE));
+        $data['mobile'] 			=  safe_trim($this->input->post('mobile',TRUE));
+        $data['country_code'] 		=  safe_trim($this->input->post('country_code',TRUE));
+        $data['company_id'] 		=  safe_trim($this->input->post('company',TRUE));
+        $data['location'] 			=  safe_trim($this->input->post('location',TRUE));
       	
 		$data['status'] 	= 1;
 		$data['created_by'] = $this->userid;
@@ -181,7 +181,7 @@ class Customer extends My_Controller
 	public function update($id){
 		$_POST['id'] = $id;
 
-		$change_pass = trim($this->input->post('change_pass',TRUE));
+		$change_pass = safe_trim($this->input->post('change_pass',TRUE));
 		if($change_pass == 1){
 			$this->form_validation->set_rules('password', 'Password', 'required|min_length[8]');
 		}
@@ -213,19 +213,19 @@ class Customer extends My_Controller
         
         $data = [];
         if($change_pass == 1){
-			$password = trim($this->input->post('password',TRUE));
+			$password = safe_trim($this->input->post('password',TRUE));
 			$data['password'] 			=  hash('sha256', $password);
 		}
 
-        $data['first_name'] 		=  trim($this->input->post('first_name',TRUE));
-        $data['last_name'] 			=  trim($this->input->post('last_name',TRUE));
-        $data['email'] 				=  trim($this->input->post('email',TRUE));
-        $data['mobile'] 			=  trim($this->input->post('mobile',TRUE));
-        $data['country_code'] 		=  trim($this->input->post('country_code',TRUE));
-        $data['company_id'] 		=  trim($this->input->post('company',TRUE));
-        $data['location'] 			=  trim($this->input->post('location',TRUE));
+        $data['first_name'] 		=  safe_trim($this->input->post('first_name',TRUE));
+        $data['last_name'] 			=  safe_trim($this->input->post('last_name',TRUE));
+        $data['email'] 				=  safe_trim($this->input->post('email',TRUE));
+        $data['mobile'] 			=  safe_trim($this->input->post('mobile',TRUE));
+        $data['country_code'] 		=  safe_trim($this->input->post('country_code',TRUE));
+        $data['company_id'] 		=  safe_trim($this->input->post('company',TRUE));
+        $data['location'] 			=  safe_trim($this->input->post('location',TRUE));
       	
-		$data['status'] 			= trim($this->input->post('status',TRUE));;
+		$data['status'] 			= safe_trim($this->input->post('status',TRUE));;
 		$data['updated_by'] 		= $this->userid;
 
 

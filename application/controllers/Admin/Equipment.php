@@ -93,8 +93,8 @@ class Equipment extends My_Controller
         $temp = [];
         $model = $this->input->post('model',TRUE);
         foreach ($model as $key => $value) {
-        	if(trim($value) != ''){
-        		$temp[] = trim($value);
+        	if(safe_trim($value) != ''){
+        		$temp[] = safe_trim($value);
         	}
         }
         $temp = array_unique($temp);
@@ -110,7 +110,7 @@ class Equipment extends My_Controller
 
         //Store
         $data = [];
-        $data['name'] 		=  trim($this->input->post('name',TRUE));
+        $data['name'] 		=  safe_trim($this->input->post('name',TRUE));
         $data['model'] 		=  json_encode($temp);
 
 		$data['status'] 	= 1;
@@ -170,8 +170,8 @@ class Equipment extends My_Controller
         $temp = [];
         $model = $this->input->post('model',TRUE);
         foreach ($model as $key => $value) {
-        	if(trim($value) != ''){
-        		$temp[] = trim($value);
+        	if(safe_trim($value) != ''){
+        		$temp[] = safe_trim($value);
         	}
         }
         $temp = array_unique($temp);
@@ -186,9 +186,9 @@ class Equipment extends My_Controller
 
         //Store
         $data = [];
-        $data['name'] 		=  trim($this->input->post('name',TRUE));
+        $data['name'] 		=  safe_trim($this->input->post('name',TRUE));
         $data['model'] 		=  json_encode($temp);
-		$data['status'] 	= trim($this->input->post('status',TRUE));;
+		$data['status'] 	= safe_trim($this->input->post('status',TRUE));;
 		$data['updated_by'] = $this->userid;
 
 		$where = ['id' => $id];

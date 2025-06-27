@@ -147,7 +147,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     $('.deleteBtn').on('click', function() {
         var idToRemove = $(this).data('id'); // Get the ID to remove
         // Find the corresponding entry and extract the name
-        var nameToRemove = $('#entry-' + idToRemove).text().trim().split(' ')[0]; // Extract the first word as the name
+        var nameToRemove = $('#entry-' + idToRemove).text().safe_trim().split(' ')[0]; // Extract the first word as the name
         // Remove the corresponding entry from the DOM
         $('#entry-' + idToRemove).remove();
         // Update the input field

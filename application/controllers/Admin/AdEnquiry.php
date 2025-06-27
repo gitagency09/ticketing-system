@@ -203,7 +203,7 @@ class AdEnquiry extends My_Controller
 
 	public function remark(){
 
-		$enquiry_id 	= trim($this->input->post('id',TRUE));
+		$enquiry_id 	= safe_trim($this->input->post('id',TRUE));
 
 		//Start validation
 		$this->form_validation->set_rules('id', 'Enquiry id', 'required|exists[enquiry.id]');
@@ -266,7 +266,7 @@ class AdEnquiry extends My_Controller
 		$data 						= [];
 		$data['enquiry_id'] 		= $enquiry_id;
 		$data['user_id'] 			= $this->userid;
-		$data['remark'] 			= trim($this->input->post('remark',TRUE));
+		$data['remark'] 			= safe_trim($this->input->post('remark',TRUE));
 		$data['document'] 			= $file_name;		
 		$data['created_at'] 		= getDt();
 		
@@ -309,7 +309,7 @@ class AdEnquiry extends My_Controller
 
 
 	public function status(){
-		$enquiry_id 	= trim($this->input->post('id',TRUE));
+		$enquiry_id 	= safe_trim($this->input->post('id',TRUE));
 
 		//Start validation
 		$this->form_validation->set_rules('id', 'Enquiry', 'required|exists[enquiry.id]');
@@ -326,7 +326,7 @@ class AdEnquiry extends My_Controller
         //end validation
         $this->load->model('Notification_model');
 
-        $new_status = trim($this->input->post('status',TRUE));
+        $new_status = safe_trim($this->input->post('status',TRUE));
 		$enquiry = $this->Enquiry_model->get_enquiry(['id' => $enquiry_id]);
 		if($new_status == $enquiry['status']){
 			sendResponse(0, 'Status must be different from current status.');
@@ -504,7 +504,7 @@ class AdEnquiry extends My_Controller
 
         foreach ($newlist as $key=>$row) {
         	$doc = '';
-        	if(trim($row['document']) != ''){
+        	if(safe_trim($row['document']) != ''){
         		$doc = base_url($row['document']);
         	}
         	$i=1;

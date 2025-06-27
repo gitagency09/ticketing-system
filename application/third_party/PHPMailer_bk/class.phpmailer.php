@@ -739,7 +739,7 @@ class PHPMailer
                 echo gmdate('Y-m-d H:i:s') . "\t" . str_replace(
                     "\n",
                     "\n                   \t                  ",
-                    trim($str)
+                    safe_trim($str)
                 ) . "\n";
         }
     }
@@ -868,8 +868,8 @@ class PHPMailer
      */
     protected function addOrEnqueueAnAddress($kind, $address, $name)
     {
-        $address = trim($address);
-        $name = trim(preg_replace('/[\r\n]+/', '', $name)); //Strip breaks and trim
+        $address = safe_trim($address);
+        $name = safe_trim(preg_replace('/[\r\n]+/', '', $name)); //Strip breaks and trim
         if (($pos = strrpos($address, '@')) === false) {
             // At-sign is misssing.
             $error_message = $this->lang('invalid_address') . " (addAnAddress $kind): $address";
@@ -975,7 +975,7 @@ class PHPMailer
             //Use this simpler parser
             $list = explode(',', $addrstr);
             foreach ($list as $address) {
-                $address = trim($address);
+                $address = safe_trim($address);
                 //Is there a separate name part?
                 if (strpos($address, '<') === false) {
                     //No separate name, just use the whole thing
@@ -987,10 +987,10 @@ class PHPMailer
                     }
                 } else {
                     list($name, $email) = explode('<', $address);
-                    $email = trim(str_replace('>', '', $email));
+                    $email = safe_trim(str_replace('>', '', $email));
                     if ($this->validateAddress($email)) {
                         $addresses[] = array(
-                            'name' => trim(str_replace(array('"', "'"), '', $name)),
+                            'name' => safe_trim(str_replace(array('"', "'"), '', $name)),
                             'address' => $email
                         );
                     }
@@ -1010,8 +1010,8 @@ class PHPMailer
      */
     public function setFrom($address, $name = '', $auto = true)
     {
-        $address = trim($address);
-        $name = trim(preg_replace('/[\r\n]+/', '', $name)); //Strip breaks and trim
+        $address = safe_trim($address);
+        $name = safe_trim(preg_replace('/[\r\n]+/', '', $name)); //Strip breaks and trim
         // Don't validate now addresses with IDN. Will be done in send().
         if (($pos = strrpos($address, '@')) === false or
             (!$this->has8bitChars(substr($address, ++$pos)) or !$this->idnSupported()) and
@@ -1243,7 +1243,7 @@ class PHPMailer
 
             // Validate From, Sender, and ConfirmReadingTo addresses
             foreach (array('From', 'Sender', 'ConfirmReadingTo') as $address_kind) {
-                $this->$address_kind = trim($this->$address_kind);
+                $this->$address_kind = safe_trim($this->$address_kind);
                 if (empty($this->$address_kind)) {
                     continue;
                 }
@@ -1288,7 +1288,7 @@ class PHPMailer
                 }
                 $this->mailHeader .= $this->headerLine(
                     'Subject',
-                    $this->encodeHeader($this->secureHeader(trim($this->Subject)))
+                    $this->encodeHeader($this->secureHeader(safe_trim($this->Subject)))
                 );
             }
 
@@ -1624,7 +1624,7 @@ class PHPMailer
             $hostinfo = array();
             if (!preg_match(
                 '/^((ssl|tls):\/\/)*([a-zA-Z0-9\.-]*|\[[a-fA-F0-9:]+\]):?([0-9]*)$/',
-                trim($hostentry),
+                safe_trim($hostentry),
                 $hostinfo
             )) {
                 // Not a valid host entry
@@ -2049,7 +2049,7 @@ class PHPMailer
             }
         }
 
-        $result .= $this->addrAppend('From', array(array(trim($this->From), $this->FromName)));
+        $result .= $this->addrAppend('From', array(array(safe_trim($this->From), $this->FromName)));
 
         // sendmail and mail() extract Cc from the header before sending
         if (count($this->cc) > 0) {
@@ -2091,7 +2091,7 @@ class PHPMailer
                 'PHPMailer ' . $this->Version . ' (https://github.com/PHPMailer/PHPMailer)'
             );
         } else {
-            $myXmailer = trim($this->XMailer);
+            $myXmailer = safe_trim($this->XMailer);
             if ($myXmailer) {
                 $result .= $this->headerLine('X-Mailer', $myXmailer);
             }
@@ -2104,8 +2104,8 @@ class PHPMailer
         // Add custom headers
         foreach ($this->CustomHeader as $header) {
             $result .= $this->headerLine(
-                trim($header[0]),
-                $this->encodeHeader(trim($header[1]))
+                safe_trim($header[0]),
+                $this->encodeHeader(safe_trim($header[1]))
             );
         }
         if (!$this->sign_key_file) {
@@ -2806,17 +2806,17 @@ class PHPMailer
             } else {
                 $encoded = base64_encode($str);
                 $maxlen -= $maxlen % 4;
-                $encoded = trim(chunk_split($encoded, $maxlen, "\n"));
+                $encoded = safe_trim(chunk_split($encoded, $maxlen, "\n"));
             }
         } else {
             $encoding = 'Q';
             $encoded = $this->encodeQ($str, $position);
             $encoded = $this->wrapText($encoded, $maxlen, true);
-            $encoded = str_replace('=' . self::CRLF, "\n", trim($encoded));
+            $encoded = str_replace('=' . self::CRLF, "\n", safe_trim($encoded));
         }
 
         $encoded = preg_replace('/^(.*)$/m', ' =?' . $this->CharSet . "?$encoding?\\1?=", $encoded);
-        $encoded = trim(str_replace("\n", $this->LE, $encoded));
+        $encoded = safe_trim(str_replace("\n", $this->LE, $encoded));
 
         return $encoded;
     }
@@ -3497,7 +3497,7 @@ class PHPMailer
             return call_user_func($advanced, $html);
         }
         return html_entity_decode(
-            trim(strip_tags(preg_replace('/<(head|title|style|script)[^>]*>.*?<\/\\1>/si', '', $html))),
+            safe_trim(strip_tags(preg_replace('/<(head|title|style|script)[^>]*>.*?<\/\\1>/si', '', $html))),
             ENT_QUOTES,
             $this->CharSet
         );
@@ -3716,7 +3716,7 @@ class PHPMailer
      */
     public function secureHeader($str)
     {
-        return trim(str_replace(array("\r", "\n"), '', $str));
+        return safe_trim(str_replace(array("\r", "\n"), '', $str));
     }
 
     /**
@@ -3831,7 +3831,7 @@ class PHPMailer
             list($heading, $value) = explode(':', $line, 2);
             $heading = strtolower($heading);
             $value = preg_replace('/\s{2,}/', ' ', $value); // Compress useless spaces
-            $lines[$key] = $heading . ':' . trim($value); // Don't forget to remove WSP around the value
+            $lines[$key] = $heading . ':' . safe_trim($value); // Don't forget to remove WSP around the value
         }
         $signHeader = implode("\r\n", $lines);
         return $signHeader;

@@ -148,9 +148,9 @@ class Employee extends My_Controller
         	sendResponse(0, validation_errors());
         }
 
-        $email = trim($this->input->post('email',TRUE));
+        $email = safe_trim($this->input->post('email',TRUE));
         //dd($email);
-  //       $split = explode("@",trim($email));
+  //       $split = explode("@",safe_trim($email));
 		// if(strtolower($split[1]) != $this->emp_domain){
 		// 	sendResponse(0, 'Email id does not match with the domain');
 		// }
@@ -158,20 +158,20 @@ class Employee extends My_Controller
         //end validation
 
         //Store
-        $password = trim($this->input->post('password',TRUE));
+        $password = safe_trim($this->input->post('password',TRUE));
 
         $data = [];
-        $data['first_name'] 			=  trim($this->input->post('first_name',TRUE));
-        $data['last_name'] 				=  trim($this->input->post('last_name',TRUE));
-        $data['emp_id'] 				=  trim($this->input->post('emp_id',TRUE));
+        $data['first_name'] 			=  safe_trim($this->input->post('first_name',TRUE));
+        $data['last_name'] 				=  safe_trim($this->input->post('last_name',TRUE));
+        $data['emp_id'] 				=  safe_trim($this->input->post('emp_id',TRUE));
         $data['email'] 					=  $email;
         $data['password'] 				=  hash('sha256', $password);
-        $data['mobile'] 				=  trim($this->input->post('mobile',TRUE));
-        $data['country_code'] 			=  trim($this->input->post('country_code',TRUE));
-        $data['designation_id'] 		=  trim($this->input->post('designation',TRUE));
-        $data['department_id'] 			=  trim($this->input->post('department',TRUE));
+        $data['mobile'] 				=  safe_trim($this->input->post('mobile',TRUE));
+        $data['country_code'] 			=  safe_trim($this->input->post('country_code',TRUE));
+        $data['designation_id'] 		=  safe_trim($this->input->post('designation',TRUE));
+        $data['department_id'] 			=  safe_trim($this->input->post('department',TRUE));
       	
-		$data['role'] 		= trim($this->input->post('role',TRUE));
+		$data['role'] 		= safe_trim($this->input->post('role',TRUE));
 		$data['status'] 	= 1;
 		$data['created_by'] = $this->userid;
 		$data['created_at'] = getDt();
@@ -227,7 +227,7 @@ class Employee extends My_Controller
 	public function update($id){
 		$_POST['id'] = $id;
 
-		$change_pass = trim($this->input->post('change_pass',TRUE));
+		$change_pass = safe_trim($this->input->post('change_pass',TRUE));
 		if($change_pass == 1){
 			$this->form_validation->set_rules('password', 'Password', 'required|min_length[8]');
 		}
@@ -273,9 +273,9 @@ class Employee extends My_Controller
         	sendResponse(0, validation_errors());
         }
 
-        $email = trim($this->input->post('email',TRUE));
+        $email = safe_trim($this->input->post('email',TRUE));
         
-  //       $split = explode("@",trim($email));
+  //       $split = explode("@",safe_trim($email));
 		// if(strtolower($split[1]) != $this->emp_domain){
 		// 	sendResponse(0, 'Email id does not match with the domain');
 		// }
@@ -284,21 +284,21 @@ class Employee extends My_Controller
         
         $data = [];
         if($change_pass == 1){
-			$password = trim($this->input->post('password',TRUE));
+			$password = safe_trim($this->input->post('password',TRUE));
 			$data['password'] 			=  hash('sha256', $password);
 		}
 
-        $data['first_name'] 			=  trim($this->input->post('first_name',TRUE));
-        $data['last_name'] 				=  trim($this->input->post('last_name',TRUE));
-        $data['emp_id'] 				=  trim($this->input->post('emp_id',TRUE));
+        $data['first_name'] 			=  safe_trim($this->input->post('first_name',TRUE));
+        $data['last_name'] 				=  safe_trim($this->input->post('last_name',TRUE));
+        $data['emp_id'] 				=  safe_trim($this->input->post('emp_id',TRUE));
         $data['email'] 					=  $email;
-        $data['mobile'] 				=  trim($this->input->post('mobile',TRUE));
-        $data['country_code'] 			=  trim($this->input->post('country_code',TRUE));
-        $data['designation_id'] 		=  trim($this->input->post('designation',TRUE));
-        $data['department_id'] 			=  trim($this->input->post('department',TRUE));
+        $data['mobile'] 				=  safe_trim($this->input->post('mobile',TRUE));
+        $data['country_code'] 			=  safe_trim($this->input->post('country_code',TRUE));
+        $data['designation_id'] 		=  safe_trim($this->input->post('designation',TRUE));
+        $data['department_id'] 			=  safe_trim($this->input->post('department',TRUE));
       	
-      	$data['role'] 					= trim($this->input->post('role',TRUE));
-		$data['status'] 				= trim($this->input->post('status',TRUE));;
+      	$data['role'] 					= safe_trim($this->input->post('role',TRUE));
+		$data['status'] 				= safe_trim($this->input->post('status',TRUE));;
 		$data['updated_by'] 			= $this->userid;
 
 

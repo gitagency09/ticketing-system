@@ -225,15 +225,15 @@ class Project extends My_Controller
         	sendResponse(0, validation_errors());
         }
 
-        $supply_date 	= trim($this->input->post('supply_date',TRUE));
-		$warranty_till 	= trim($this->input->post('warranty_till',TRUE));
+        $supply_date 	= safe_trim($this->input->post('supply_date',TRUE));
+		$warranty_till 	= safe_trim($this->input->post('warranty_till',TRUE));
 
 		if(strtotime($supply_date) > strtotime($warranty_till)){
 			sendResponse(0, 'Warranty valid till date must be greater than supply date');
         }
 
-        $equi_id 	= trim($this->input->post('equipment',TRUE));
-        $model 		= trim($this->input->post('model',TRUE));
+        $equi_id 	= safe_trim($this->input->post('equipment',TRUE));
+        $model 		= safe_trim($this->input->post('model',TRUE));
         //check if model name exist in equipment table
         $equipment = $this->Equipment_model->get_equipment(['id' => $equi_id]);
 		if(!$equipment){
@@ -251,8 +251,8 @@ class Project extends My_Controller
 			}
 		}
 
-		$company 	= trim($this->input->post('company',TRUE));
-		$company_2 	= trim($this->input->post('company_2',TRUE));
+		$company 	= safe_trim($this->input->post('company',TRUE));
+		$company_2 	= safe_trim($this->input->post('company_2',TRUE));
 		if($company == $company_2){
 			sendResponse(0,'Please select 2 different company');
 		}
@@ -260,13 +260,13 @@ class Project extends My_Controller
 
         //Store
         $data = [];
-        $data['ga_no'] 					=  trim($this->input->post('ga_no',TRUE));
-        $data['project_code'] 			=  trim($this->input->post('project_code',TRUE));
+        $data['ga_no'] 					=  safe_trim($this->input->post('ga_no',TRUE));
+        $data['project_code'] 			=  safe_trim($this->input->post('project_code',TRUE));
         $data['equipment_id'] 			=  $equi_id;
         $data['model'] 					=  $model;
         $data['company_id'] 			=  $company;
         $data['company_id_2'] 			=  $company_2;
-        $data['project_name'] 			=  trim($this->input->post('project_name',TRUE));
+        $data['project_name'] 			=  safe_trim($this->input->post('project_name',TRUE));
         $data['supply_date'] 			=  $supply_date;
         $data['warranty_till'] 			=  $warranty_till;
        
@@ -380,10 +380,10 @@ class Project extends My_Controller
         }
 
 
-        $equi_id 		= trim($this->input->post('equipment',TRUE));
-		$model 			= trim($this->input->post('model',TRUE));
-		$supply_date 	= trim($this->input->post('supply_date',TRUE));
-		$warranty_till 	= trim($this->input->post('warranty_till',TRUE));
+        $equi_id 		= safe_trim($this->input->post('equipment',TRUE));
+		$model 			= safe_trim($this->input->post('model',TRUE));
+		$supply_date 	= safe_trim($this->input->post('supply_date',TRUE));
+		$warranty_till 	= safe_trim($this->input->post('warranty_till',TRUE));
 
 		if(strtotime($supply_date) > strtotime($warranty_till)){
 			sendResponse(0, 'Warranty valid till date must be greater than supply date');
@@ -407,8 +407,8 @@ class Project extends My_Controller
 			}
 		}
 
-		$company 	= trim($this->input->post('company',TRUE));
-		$company_2 	= trim($this->input->post('company_2',TRUE));
+		$company 	= safe_trim($this->input->post('company',TRUE));
+		$company_2 	= safe_trim($this->input->post('company_2',TRUE));
 		if($company == $company_2){
 			sendResponse(0,'Please select 2 different company');
 		}
@@ -416,17 +416,17 @@ class Project extends My_Controller
 
         //Store
         $data = [];
-        $data['ga_no'] 					=  trim($this->input->post('ga_no',TRUE));
-        $data['project_code'] 			=  trim($this->input->post('project_code',TRUE));
+        $data['ga_no'] 					=  safe_trim($this->input->post('ga_no',TRUE));
+        $data['project_code'] 			=  safe_trim($this->input->post('project_code',TRUE));
         $data['equipment_id'] 			=  $equi_id;
         $data['model'] 					=  $model;
         $data['company_id'] 			=  $company;
         $data['company_id_2'] 			=  $company_2;
-        $data['project_name'] 			=  trim($this->input->post('project_name',TRUE));
+        $data['project_name'] 			=  safe_trim($this->input->post('project_name',TRUE));
         $data['supply_date'] 			=  $supply_date;
         $data['warranty_till'] 			=  $warranty_till;
       	
-		$data['status'] 				= trim($this->input->post('status',TRUE));;
+		$data['status'] 				= safe_trim($this->input->post('status',TRUE));;
 		$data['updated_by'] 			= $this->userid;
 
 
@@ -526,7 +526,7 @@ class Project extends My_Controller
 				continue;
 			}
 
-			$ga_no = trim($row[$headers['ga_no']]);
+			$ga_no = safe_trim($row[$headers['ga_no']]);
 
 			if( in_array($ga_no, $ga_no_arr)){
 				$errors[] = array(
@@ -574,17 +574,17 @@ class Project extends My_Controller
 			// dd($row);
 
 			$data = array();
-			$data['ga_no']    				= trim($row[$headers['ga_no']]);
-			$data['project_code']    		= trim($row[$headers['project_code']]);
-			$data['model']    				= trim($row[$headers['equipment_model']]);
-			$data['project_name']    		= trim($row[$headers['project_name']]);
+			$data['ga_no']    				= safe_trim($row[$headers['ga_no']]);
+			$data['project_code']    		= safe_trim($row[$headers['project_code']]);
+			$data['model']    				= safe_trim($row[$headers['equipment_model']]);
+			$data['project_name']    		= safe_trim($row[$headers['project_name']]);
 
-			$supply_date 					= trim($row[$headers['date_of_supply']]);
-			$warranty_till					= trim($row[$headers['warantee_valid_till']]);
+			$supply_date 					= safe_trim($row[$headers['date_of_supply']]);
+			$warranty_till					= safe_trim($row[$headers['warantee_valid_till']]);
 
-			$company_name_1    				= trim($row[$headers['company_name_1']]);
-			$company_name_2    				= trim($row[$headers['company_name_2']]);
-			$equipment_name   				= trim($row[$headers['equipment_name']]);
+			$company_name_1    				= safe_trim($row[$headers['company_name_1']]);
+			$company_name_2    				= safe_trim($row[$headers['company_name_2']]);
+			$equipment_name   				= safe_trim($row[$headers['equipment_name']]);
 
 
 			//check ga no

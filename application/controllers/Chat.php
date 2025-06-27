@@ -140,7 +140,7 @@ class Chat extends My_Controller
 	
 	public function getChat($conversationId) {	
 
-		$chatid = trim($this->input->get('lastid',TRUE));
+		$chatid = safe_trim($this->input->get('lastid',TRUE));
 
 		// dd($chatid);
 		
@@ -196,7 +196,7 @@ class Chat extends My_Controller
 	public function store($conversationId){
 		
 
-		$message = trim($this->input->post('message',TRUE));
+		$message = safe_trim($this->input->post('message',TRUE));
 
 		if($message == ''){
 			sendResponse(0,'Message can not be empty');

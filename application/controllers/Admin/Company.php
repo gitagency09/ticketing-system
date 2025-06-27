@@ -97,9 +97,9 @@ class Company extends My_Controller
             sendResponse(0, validation_errors());
         }
 
-        $name                   =  trim($this->input->post('name',TRUE));
-        //$domain                 =  trim($this->input->post('domain',TRUE));
-        $location               =  trim($this->input->post('location',TRUE));
+        $name                   =  safe_trim($this->input->post('name',TRUE));
+        //$domain                 =  safe_trim($this->input->post('domain',TRUE));
+        $location               =  safe_trim($this->input->post('location',TRUE));
         $employee               =  $this->input->post('Employee_add');
         // echo "<pre>";
         // print_r($employee_comma);
@@ -253,10 +253,10 @@ class Company extends My_Controller
         }
 
 
-        $name                   =  trim($this->input->post('name',TRUE));
-        //$domain                 =  trim($this->input->post('domain',TRUE));
-        $location               =  trim($this->input->post('location',TRUE));
-        $status                 =  trim($this->input->post('status',TRUE));
+        $name                   =  safe_trim($this->input->post('name',TRUE));
+        //$domain                 =  safe_trim($this->input->post('domain',TRUE));
+        $location               =  safe_trim($this->input->post('location',TRUE));
+        $status                 =  safe_trim($this->input->post('status',TRUE));
       
         $employee = $this->input->post('Employee_add'); // New employees (expected to be an array)
         $already_emp = $this->input->post('already_emp'); // This might be a comma-separated string
@@ -369,7 +369,7 @@ class Company extends My_Controller
             $employeeIds = explode(',', $company['employees']);
 
             foreach ($employeeIds as $userId) {
-                $userId = trim($userId);
+                $userId = safe_trim($userId);
                 if (!empty($userId)) {
                     // Check if mapping already exists to prevent duplicates
                     $exists = $this->db->get_where('company_manager_mapping', [

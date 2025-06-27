@@ -293,8 +293,8 @@ class News extends My_Controller
 
         //Store
         $data = [];
-        $data['title'] 		= trim($this->input->post('title',TRUE));
-        $data['content'] 	= trim($this->input->post('content',TRUE));
+        $data['title'] 		= safe_trim($this->input->post('title',TRUE));
+        $data['content'] 	= safe_trim($this->input->post('content',TRUE));
         $data['image'] 		= json_encode($file_array);
 		$data['page_type'] 	= 'news';
 		$data['status'] 	= 1;
@@ -584,10 +584,10 @@ class News extends My_Controller
 
         //Store
         $data = [];
-        $data['title'] 		= trim($this->input->post('title',TRUE));
-        $data['content'] 	= trim($this->input->post('content',TRUE));
+        $data['title'] 		= safe_trim($this->input->post('title',TRUE));
+        $data['content'] 	= safe_trim($this->input->post('content',TRUE));
         $data['image'] 		= json_encode($file_array);
-		$data['status'] 	= trim($this->input->post('status',TRUE));
+		$data['status'] 	= safe_trim($this->input->post('status',TRUE));
 		$data['updated_by'] = $this->userid;
 
 		$where = ['id' => $newsId];

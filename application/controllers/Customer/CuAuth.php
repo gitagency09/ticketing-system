@@ -157,7 +157,7 @@ class CuAuth extends My_Controller
             // 		sendResponse(0, 'Company domain is not registered');
             // 	}else{
             // 		//validate with email
-            // 		$split = explode("@",trim($email));
+            // 		$split = explode("@",safe_trim($email));
             // 		if($split[1] != $domain){
             // 			sendResponse(0, 'Email id does not match with Company domain');
             // 		}
@@ -241,7 +241,7 @@ class CuAuth extends My_Controller
 			$mobile 				=  $this->input->post('mobile',TRUE);
 			$company 				=  $this->input->post('company',TRUE);
 			$location 				=  $this->input->post('location',TRUE);
-			$pass_1 				=  trim($this->input->post('pass_1',TRUE));
+			$pass_1 				=  safe_trim($this->input->post('pass_1',TRUE));
 			$recaptcha_response 	= $this->input->post('captcha',TRUE);
 
 			//Start validation
@@ -453,7 +453,7 @@ class CuAuth extends My_Controller
 	public function resetPasswordVerify(){
 		$email 					=  $this->input->post('email',TRUE);
 		$reset_token 			=  $this->input->post('reset_token',TRUE);
-		$pass_1 				=  trim($this->input->post('pass_1',TRUE));
+		$pass_1 				=  safe_trim($this->input->post('pass_1',TRUE));
 		$recaptcha_response 	= $this->input->post('captcha',TRUE);
 
 		//Start validation
@@ -517,7 +517,7 @@ class CuAuth extends My_Controller
 
 
 	public function getCompany() {
-		$email	=  trim($this->input->post('email',TRUE));
+		$email	=  safe_trim($this->input->post('email',TRUE));
 
 		if($email == ''){
 			sendResponse(0, 'Email is required');

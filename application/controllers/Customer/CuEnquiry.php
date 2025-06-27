@@ -196,9 +196,9 @@ class CuEnquiry extends My_Controller
         //validate ga no against company
         $sparepart_names_arr  = [];
         $sparepart_arr  = [];
-		$ga_no 			= trim($this->input->post('ga_no',TRUE));
-		$equi_id 		= trim($this->input->post('equipment',TRUE));
-		$model 			= trim($this->input->post('model',TRUE));
+		$ga_no 			= safe_trim($this->input->post('ga_no',TRUE));
+		$equi_id 		= safe_trim($this->input->post('equipment',TRUE));
+		$model 			= safe_trim($this->input->post('model',TRUE));
 		$spareparts 	= $this->input->post('sparepart',TRUE);
 		$qty 			= $this->input->post('qty',TRUE);
 		// $spareparts   	= array_unique($spareparts);
@@ -263,7 +263,7 @@ class CuEnquiry extends My_Controller
 		$data['spareparts'] 		= json_encode($sparepart_arr);
 		$data['sparepart_names'] 	= implode(",", $sparepart_names_arr);
 		$data['model'] 				= $model;
-		$data['query'] 				= trim($this->input->post('query',TRUE));
+		$data['query'] 				= safe_trim($this->input->post('query',TRUE));
 		$data['status'] 			= 2;
 		$data['created_at'] 		= getDt();
 
