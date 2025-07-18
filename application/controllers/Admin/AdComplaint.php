@@ -1941,131 +1941,240 @@ class AdComplaint extends My_Controller
 	}//end classification
 
 	function export()
-    {	
-    	$this->load->model('Equipment_model');
+	{
+		// Suppress deprecated warnings (without affecting logic)
+		error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 
-		if($this->role == 'admin' || $this->role == 'super_admin'){
-			$params = $this->searchParam(['status','ticket_no','ga_no','complaint_type','classification','feedback','company_id']);
+		$this->load->model('Equipment_model');
 
-		} else{
-			$params = $this->searchParam(['status','ticket_no','ga_no','complaint_type','classification','action','company_id']);
+		if ($this->role == 'admin' || $this->role == 'super_admin') {
+			$params = $this->searchParam(['status', 'ticket_no', 'ga_no', 'complaint_type', 'classification', 'feedback', 'company_id']);
+		} else {
+			$params = $this->searchParam(['status', 'ticket_no', 'ga_no', 'complaint_type', 'classification', 'action', 'company_id']);
 		}
 
-		$whereArr 	= $params['where'];
-		$likeArr 	= $params['like'];
+		$whereArr = $params['where'];
+		$likeArr = $params['like'];
 
-		if($this->role == 'admin' || $this->role == 'super_admin'){
+		if ($this->role == 'admin' || $this->role == 'super_admin') {
 			$columns = '*';
-			$list = $this->Complaint_model->get_complaints($whereArr,$columns,FALSE,FALSE, $likeArr);
-			/*set column names*/
-        	$table_columns = array('Sr No', 'Ticket ID','Customer','Company','GA Number','Equipment','Model No','Customer Equipment No','Complaint Type','Classification','Feedback Submitted','From Date','To Date','Order No','Message','Status','Complaint Date','Completion date');
-		}else{
+			$list = $this->Complaint_model->get_complaints($whereArr, $columns, FALSE, FALSE, $likeArr);
+			$table_columns = array('Sr No', 'Ticket ID', 'Customer', 'Company', 'GA Number', 'Equipment', 'Model No', 'Customer Equipment No', 'Complaint Type', 'Classification', 'Feedback Submitted', 'From Date', 'To Date', 'Order No', 'Message', 'Status', 'Complaint Date', 'Completion date');
+		} else {
 			$whereArr['h.emp_id'] = $this->userid;
 			$whereArr['h.type'] = 'assign';
 			$columns = '*';
-			$list = $this->Complaint_model->get_complaints_for_emp_new($whereArr,$columns,FALSE,FALSE, $likeArr);
-
-			/*set column names*/
-        	$table_columns = array('Sr No', 'Ticket ID','Customer','Company','GA Number','Equipment','Model No','Customer Equipment No','Complaint Type','Classification','From Date','To Date','Order No','Message','Status','Complaint Date','Completion date');
+			$list = $this->Complaint_model->get_complaints_for_emp_new($whereArr, $columns, FALSE, FALSE, $likeArr);
+			$table_columns = array('Sr No', 'Ticket ID', 'Customer', 'Company', 'GA Number', 'Equipment', 'Model No', 'Customer Equipment No', 'Complaint Type', 'Classification', 'From Date', 'To Date', 'Order No', 'Message', 'Status', 'Complaint Date', 'Completion date');
 		}
 
-		// dd($this->pq());
 		$status_list = complaint_status_list();
-		
+
 		foreach ($list as $key => $value) {
-			//customer data
 			$customer = $this->Customer_model->get_customer_details(['c.id' => $value['customer_id']]);
-			if($customer){
-				$list[$key]['customer'] 	= ucfirst($customer['first_name']).' '.ucfirst($customer['last_name']);
-				$list[$key]['company'] 	= $customer['company_name'];
-			}else{
-				$list[$key]['customer'] ='';
-				$list[$key]['company'] 	='';
+			if ($customer) {
+				$list[$key]['customer'] = ucfirst($customer['first_name']) . ' ' . ucfirst($customer['last_name']);
+				$list[$key]['company'] = $customer['company_name'];
+			} else {
+				$list[$key]['customer'] = '';
+				$list[$key]['company'] = '';
 			}
 
-			//equipment data
-			$equiDetails = $this->Equipment_model->get_equipemnt_details_by_project(['p.ga_no' => $value['ga_no']],'e.name,p.model');
-
+			$equiDetails = $this->Equipment_model->get_equipemnt_details_by_project(['p.ga_no' => $value['ga_no']], 'e.name,p.model');
 			$list[$key]['equipment'] = ($equiDetails) ? $equiDetails['name'] : '';
 			$list[$key]['model'] = ($equiDetails) ? $equiDetails['model'] : '';
-
-			$list[$key]['status'] 	= $status_list[$value['status']];
-			$list[$key]['created_at'] 	= custDate($value['created_at']);
-
-
+			$list[$key]['status'] = $status_list[$value['status']];
+			$list[$key]['created_at'] = custDate($value['created_at']);
 			$list[$key]['completed_at'] = '';
 
-			//if closed, add completion date
-			if($value['status'] == 4){
+			if ($value['status'] == 4) {
 				$whereHistory = array(
 					'order_by' => ['id' => 'desc'],
 					'limit' => 1,
 				);
-				// $history = $this->ComplaintHistory_model->get_complaint_history(['complaint_id' =>$value['id'], 'type'=>'remark','assigned_by' => ''],'*',$whereHistory);
-				$history = $this->ComplaintHistory_model->get_complaint_history(['complaint_id' =>$value['id'], 'type'=>'remark'],'*',$whereHistory);
-				if($history){
-					$list[$key]['completed_at'] 	= custDate($history['created_at']);
+				$history = $this->ComplaintHistory_model->get_complaint_history(['complaint_id' => $value['id'], 'type' => 'remark'], '*', $whereHistory);
+				if ($history) {
+					$list[$key]['completed_at'] = custDate($history['created_at']);
 				}
 			}
 		}
-		// dd($list);
-		// die;
-		//dd($list);
 
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+		$spreadsheet = new Spreadsheet();
+		$sheet = $spreadsheet->getActiveSheet();
+
+		$column = 1;
+		foreach ($table_columns as $field) {
+			$sheet->setCellValueByColumnAndRow($column, 1, $field);
+			$column++;
+		}
+
+		$excel_row = 2;
+		$complaint_types = complaint_types();
+		$classifications = classifications();
+
+		foreach ($list as $key => $row) {
+			$class_e = isset($classifications[$row['classification']]) ? $classifications[$row['classification']] : '';
+			$feedback = ($row['feedback'] == 1) ? 'Yes' : '-';
+			$col_count = 1;
+
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, ($key + 1));
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['ticket_no']);
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['customer']));
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['company']));
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['ga_no']));
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['equipment']));
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['model']));
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['cust_equipment_no']));
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $complaint_types[$row['complaint_type']]);
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $class_e);
+
+			if ($this->role == 'admin' || $this->role == 'super_admin') {
+				$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $feedback);
+			}
+
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['from_date']);
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['to_date']);
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['order_no']));
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['description']));
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['status']);
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['created_at']);
+			$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['completed_at']);
+			$excel_row++;
+		}
+
+		$writer = new Xlsx($spreadsheet);
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="ticket_list.xlsx"');
+		$writer->save('php://output');
+	}
+
+
+	// function export()
+    // {	
+    // 	$this->load->model('Equipment_model');
+
+	// 	if($this->role == 'admin' || $this->role == 'super_admin'){
+	// 		$params = $this->searchParam(['status','ticket_no','ga_no','complaint_type','classification','feedback','company_id']);
+
+	// 	} else{
+	// 		$params = $this->searchParam(['status','ticket_no','ga_no','complaint_type','classification','action','company_id']);
+	// 	}
+
+	// 	$whereArr 	= $params['where'];
+	// 	$likeArr 	= $params['like'];
+
+	// 	if($this->role == 'admin' || $this->role == 'super_admin'){
+	// 		$columns = '*';
+	// 		$list = $this->Complaint_model->get_complaints($whereArr,$columns,FALSE,FALSE, $likeArr);
+	// 		/*set column names*/
+    //     	$table_columns = array('Sr No', 'Ticket ID','Customer','Company','GA Number','Equipment','Model No','Customer Equipment No','Complaint Type','Classification','Feedback Submitted','From Date','To Date','Order No','Message','Status','Complaint Date','Completion date');
+	// 	}else{
+	// 		$whereArr['h.emp_id'] = $this->userid;
+	// 		$whereArr['h.type'] = 'assign';
+	// 		$columns = '*';
+	// 		$list = $this->Complaint_model->get_complaints_for_emp_new($whereArr,$columns,FALSE,FALSE, $likeArr);
+
+	// 		/*set column names*/
+    //     	$table_columns = array('Sr No', 'Ticket ID','Customer','Company','GA Number','Equipment','Model No','Customer Equipment No','Complaint Type','Classification','From Date','To Date','Order No','Message','Status','Complaint Date','Completion date');
+	// 	}
+
+	// 	// dd($this->pq());
+	// 	$status_list = complaint_status_list();
+		
+	// 	foreach ($list as $key => $value) {
+	// 		//customer data
+	// 		$customer = $this->Customer_model->get_customer_details(['c.id' => $value['customer_id']]);
+	// 		if($customer){
+	// 			$list[$key]['customer'] 	= ucfirst($customer['first_name']).' '.ucfirst($customer['last_name']);
+	// 			$list[$key]['company'] 	= $customer['company_name'];
+	// 		}else{
+	// 			$list[$key]['customer'] ='';
+	// 			$list[$key]['company'] 	='';
+	// 		}
+
+	// 		//equipment data
+	// 		$equiDetails = $this->Equipment_model->get_equipemnt_details_by_project(['p.ga_no' => $value['ga_no']],'e.name,p.model');
+
+	// 		$list[$key]['equipment'] = ($equiDetails) ? $equiDetails['name'] : '';
+	// 		$list[$key]['model'] = ($equiDetails) ? $equiDetails['model'] : '';
+
+	// 		$list[$key]['status'] 	= $status_list[$value['status']];
+	// 		$list[$key]['created_at'] 	= custDate($value['created_at']);
+
+
+	// 		$list[$key]['completed_at'] = '';
+
+	// 		//if closed, add completion date
+	// 		if($value['status'] == 4){
+	// 			$whereHistory = array(
+	// 				'order_by' => ['id' => 'desc'],
+	// 				'limit' => 1,
+	// 			);
+	// 			// $history = $this->ComplaintHistory_model->get_complaint_history(['complaint_id' =>$value['id'], 'type'=>'remark','assigned_by' => ''],'*',$whereHistory);
+	// 			$history = $this->ComplaintHistory_model->get_complaint_history(['complaint_id' =>$value['id'], 'type'=>'remark'],'*',$whereHistory);
+	// 			if($history){
+	// 				$list[$key]['completed_at'] 	= custDate($history['created_at']);
+	// 			}
+	// 		}
+	// 	}
+	// 	// dd($list);
+	// 	// die;
+	// 	//dd($list);
+
+    //     $spreadsheet = new Spreadsheet();
+    //     $sheet = $spreadsheet->getActiveSheet();
 
         
-        $column = 1;
-        foreach ($table_columns as $field) {
-            $sheet->setCellValueByColumnAndRow($column, 1, $field);
-            $column++;
-        }
-        /*end set column names*/
+    //     $column = 1;
+    //     foreach ($table_columns as $field) {
+    //         $sheet->setCellValueByColumnAndRow($column, 1, $field);
+    //         $column++;
+    //     }
+    //     /*end set column names*/
 
-        $excel_row = 2; //now from row 2
+    //     $excel_row = 2; //now from row 2
 
-        $complaint_types = complaint_types();
-        $classifications = classifications();
+    //     $complaint_types = complaint_types();
+    //     $classifications = classifications();
 		
-        foreach ($list as $key=>$row) {
+    //     foreach ($list as $key=>$row) {
 
-        	$class_e = isset($classifications[$row['classification']]) ? $classifications[$row['classification']] : '';
-        	$feedback = ($row['feedback'] == 1) ? 'Yes' : '-';
+    //     	$class_e = isset($classifications[$row['classification']]) ? $classifications[$row['classification']] : '';
+    //     	$feedback = ($row['feedback'] == 1) ? 'Yes' : '-';
 
-        	$col_count = 1;
+    //     	$col_count = 1;
 
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, ($key+1));
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['ticket_no']);
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['customer']));
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['company']));
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['ga_no']));
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['equipment'])); //Equipment
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['model'])); //model
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['cust_equipment_no']));
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $complaint_types[$row['complaint_type']]);
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $class_e);
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, ($key+1));
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['ticket_no']);
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['customer']));
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['company']));
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['ga_no']));
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['equipment'])); //Equipment
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['model'])); //model
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['cust_equipment_no']));
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $complaint_types[$row['complaint_type']]);
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $class_e);
 
-            if($this->role == 'admin' || $this->role == 'super_admin'){
-           	 	$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $feedback);
-            }
+    //         if($this->role == 'admin' || $this->role == 'super_admin'){
+    //        	 	$sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $feedback);
+    //         }
 
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['from_date']);
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['to_date']);
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['order_no']));
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['description']));
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['status']);
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['created_at']);
-            $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['completed_at']);
-            $excel_row++;
-        }
-        $writer = new Xlsx($spreadsheet);
-        // $writer->save('hello world.xlsx');
-        // header('Content-Type: application/vnd.ms-excel');
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="ticket_list.xlsx"');
-        $writer->save('php://output');
-    }//end export
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['from_date']);
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['to_date']);
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['order_no']));
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, clean_cell_formula($row['description']));
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['status']);
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['created_at']);
+    //         $sheet->setCellValueByColumnAndRow($col_count++, $excel_row, $row['completed_at']);
+    //         $excel_row++;
+    //     }
+    //     $writer = new Xlsx($spreadsheet);
+    //     // $writer->save('hello world.xlsx');
+    //     // header('Content-Type: application/vnd.ms-excel');
+    //     header('Content-Type: application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    //     header('Content-Disposition: attachment;filename="ticket_list.xlsx"');
+    //     $writer->save('php://output');
+    // }//end export
 }
 
 ?>

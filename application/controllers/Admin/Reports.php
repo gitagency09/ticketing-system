@@ -325,6 +325,7 @@ class Reports extends My_Controller
 
 	function export()
     {	
+		error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
     	$this->load->model('Equipment_model');
         $year = $this->input->get('year'); 
         $month = $this->input->get('month'); 
@@ -417,7 +418,7 @@ class Reports extends My_Controller
 			}
 		}
 		// dd($list);
-// die;
+		// die;
 		// dd($list);
 
         $spreadsheet = new Spreadsheet();
@@ -471,7 +472,7 @@ class Reports extends My_Controller
         $writer = new Xlsx($spreadsheet);
         // $writer->save('hello world.xlsx');
         // header('Content-Type: application/vnd.ms-excel');
-        header('Content-Type: application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="ticket_list.xlsx"');
         $writer->save('php://output');
     }//end export
