@@ -2010,7 +2010,7 @@ class AdComplaint extends My_Controller
 		}
 		// dd($list);
 		// die;
-		// dd($list);
+		//dd($list);
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -2062,7 +2062,7 @@ class AdComplaint extends My_Controller
         $writer = new Xlsx($spreadsheet);
         // $writer->save('hello world.xlsx');
         // header('Content-Type: application/vnd.ms-excel');
-        header('Content-Type: application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="ticket_list.xlsx"');
         $writer->save('php://output');
     }//end export
